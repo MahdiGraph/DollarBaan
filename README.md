@@ -44,7 +44,7 @@
 
 ```bash
 # کلون کردن مخزن
-git clone https://github.com/yourusername/dollarbaan.git
+git clone https://github.com/MahdiGraph/DollarBaan.git
 cd dollarbaan
 
 # نصب وابستگی‌ها
