@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Application specific
+logs/*
+!logs/.gitkeep
+sessions/*
+!sessions/.gitkeep
+
+# Temp files
+.tmp/
+.temp/
+
+# IDE and editor folders
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+.DS_Store
+._*
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Dist files
+dist/
+build/
+coverage/

@@ -1,0 +1,28 @@
+{
+  "name": "dollarbaan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "pm2 start ecosystem.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "moment-jalaali": "^0.10.4",
+    "mysql2": "^3.12.0",
+    "node-cron": "^3.0.3",
+    "pm2": "^5.4.3",
+    "sequelize": "^6.37.5",
+    "session-file-store": "^1.5.0",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.17.0"
+  }
+}

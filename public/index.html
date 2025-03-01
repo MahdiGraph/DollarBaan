@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دلاربان | پایش لحظه ای دارایی فیزیکی شما</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <div class="floating-btn theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </div>
+  <div class="floating-btn bg-refresh" id="bgRefresh">
+    <i class="fas fa-image"></i>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card main-card glass mb-4">
+          <div class="card-header">
+            <i class="fas fa-money-bill-trend-up"></i>
+            <h2 class="mb-0 text-center flex-grow-1">دلاربان | پایش دارایی ها</h2>
+          </div>
+          <div class="card-body">
+            <!-- نمودار خلاصه ارزش کل سرمایه‌گذاری -->
+            <div class="chart-container mb-4" id="summaryChartContainer">
+              <div class="chart-title">
+                <i class="fas fa-chart-line me-1"></i>
+                روند ارزش دارایی‌های شما در <span id="summaryChartMonthsTitle">...</span> ماه گذشته
+              </div>
+              <canvas id="summaryChart"></canvas>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="summary-box d-flex align-items-center">
+                  <i class="fas fa-wallet"></i>
+                  <div>
+                    <h5 class="card-title mb-2">کل سرمایه‌گذاری</h5>
+                    <h3 id="totalInvestment" class="text-light mb-0"></h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="summary-box d-flex align-items-center">
+                  <i class="fas fa-chart-bar"></i>
+                  <div>
+                    <h5 class="card-title mb-2">سود کل</h5>
+                    <h3 id="totalProfit" class="text-light mb-0"></h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <form id="investmentForm" novalidate>
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-tags me-1"></i>
+                  نوع سرمایه‌گذاری
+                </label>
+                <select id="investmentType" class="form-select" required>
+                  <option selected disabled>انتخاب نوع سرمایه‌گذاری</option>
+                </select>
+                <div class="invalid-feedback">لطفاً نوع سرمایه‌گذاری را انتخاب کنید</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-money-bill-wave me-1"></i>
+                  مبلغ (تومان)
+                </label>
+                <input type="number" id="investmentAmount" class="form-control farsi-numbers" required min="1000" placeholder="مبلغ سرمایه‌گذاری را وارد کنید">
+                <div class="invalid-feedback">لطفاً مبلغ معتبر وارد کنید</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="far fa-calendar-alt me-1"></i>
+                  تاریخ
+                </label>
+                <input type="text" id="investmentDate" class="form-control farsi-numbers" placeholder="تاریخ سرمایه‌گذاری" required data-jdp>
+                <div class="invalid-feedback">لطفاً تاریخ را انتخاب کنید</div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button type="submit" id="addInvestmentBtn" class="btn btn-primary">
+                  <i class="fas fa-plus-circle me-1"></i> افزودن سرمایه‌گذاری
+                </button>
+                <div>
+                  <button type="submit" id="updateInvestmentBtn" class="btn btn-success d-none me-2">
+                    <i class="fas fa-edit me-1"></i> ویرایش سرمایه‌گذاری
+                  </button>
+                  <button type="button" id="cancelUpdateBtn" class="btn btn-secondary d-none">
+                    <i class="fas fa-times me-1"></i> انصراف
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div id="investmentTypesContainer" class="row"></div>
+      </div>
+      <div class="col-md-4">
+        <div class="card main-card glass">
+          <div class="card-header">
+            <i class="fas fa-coins"></i>
+            <h4 class="mb-0">آخرین قیمت‌ها</h4>
+          </div>
+          <div class="card-body" id="latestPricesBody">
+            <div class="current-date-display" id="currentDate">
+              <i class="far fa-calendar-check"></i>
+              <span>در حال بارگذاری تاریخ...</span>
+            </div>
+            <div class="loading-spinner" id="pricesLoading"></div>
+          </div>
+        </div>
+        <div class="card main-card glass mt-3">
+          <div class="card-header">
+            <i class="fas fa-cogs"></i>
+            <h4 class="mb-0">عملیات</h4>
+          </div>
+          <div class="card-body">
+            <button id="updatePricesBtn" class="btn-operation btn-operation-refresh fw-bold">
+              <i class="fas fa-sync-alt me-1"></i> بروزرسانی قیمت
+            </button>
+            
+            <button id="clearCacheBtn" class="btn-operation btn-operation-cache fw-bold">
+              <i class="fas fa-broom me-1"></i> حذف کش
+            </button>
+            
+            <a href="/logout" class="btn-operation btn-operation-logout fw-bold">
+              <i class="fas fa-sign-out-alt me-1"></i> خروج
+            </a>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.0/build/moment-jalaali.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/@majidh1/jalalidatepicker/dist/jalalidatepicker.min.js"></script>
+  <script src="https://unpkg.com/vanilla-tilt@1.8.0/dist/vanilla-tilt.min.js"></script>
+  <script>
+    axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response && error.response.status === 401) {
+          window.location.href = '/login';
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    class InvestmentTracker {
+      constructor() {
+        Chart.defaults.font.family = "'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, sans-serif";
+        Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--chart-text-color');
+        Chart.defaults.scale.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color');
+        Chart.defaults.elements.line.borderWidth = 2;
+        Chart.defaults.elements.line.tension = 0.4;
+        Chart.defaults.elements.point.radius = 3;
+        Chart.defaults.elements.point.hoverRadius = 4;
+        
+        this.backgroundCategories = [
+          '3d-abstract', 'geometric', 'digital-waves', 'glowing-blue',
+          'dark-blue', 'neon', 'gradient-blue', 'fluid', 'flow',
+          'blue-purple'
+        ];
+        this.currentImageRequest = null;
+        this.bgRefreshTimer = null;
+        this.charts = {};
+        
+        window.addEventListener('error', (event) => {
+          console.error('Uncaught error:', event.error);
+          this.showError('خطای غیرمنتظره رخ داده است');
+        });
+        
+        $(document).ready(() => {
+          try {
+            this.initElements();
+            this.setupTheme();
+            this.setupBgRefresh();
+            this.loadRandomBackground();
+            this.setupGlassEffects();
+            this.setupDatepicker();
+            this.attachEventListeners();
+            this.initializeApp();
+            this.startBackgroundTimer();
+          } catch (error) {
+            console.error('Initialization error:', error);
+            this.showError('خطا در راه‌اندازی برنامه');
+          }
+        });
+      }
+      
+      initElements() {
+        this.form = $('#investmentForm');
+        this.typeSelect = $('#investmentType');
+        this.amountInput = $('#investmentAmount');
+        this.dateInput = $('#investmentDate');
+        this.addBtn = $('#addInvestmentBtn');
+        this.updateBtn = $('#updateInvestmentBtn');
+        this.cancelUpdateBtn = $('#cancelUpdateBtn');
+        this.investmentTypesContainer = $('#investmentTypesContainer');
+        this.latestPricesBody = $('#latestPricesBody');
+        this.totalInvestmentEl = $('#totalInvestment');
+        this.totalProfitEl = $('#totalProfit');
+        this.currentDateEl = $('#currentDate');
+        this.themeToggle = $('#themeToggle');
+        this.bgRefresh = $('#bgRefresh');
+        this.pricesLoading = $('#pricesLoading');
+        this.summaryChartCanvas = $('#summaryChart');
+        this.currentEditInvestment = null;
+        this.datepicker = null;
+        this.updatePricesBtn = $('#updatePricesBtn');
+        this.clearCacheBtn = $('#clearCacheBtn');
+      }
+      
+      setupBgRefresh() {
+        this.bgRefresh.off('click').on('click', () => {
+          document.body.style.opacity = 0.8;
+          setTimeout(() => this.loadRandomBackground(), 500);
+          this.resetBackgroundTimer();
+        });
+      }
+      
+      startBackgroundTimer() {
+        this.resetBackgroundTimer();
+      }
+      
+      resetBackgroundTimer() {
+        if (this.bgRefreshTimer) {
+          clearTimeout(this.bgRefreshTimer);
+        }
+        this.bgRefreshTimer = setTimeout(() => {
+          this.loadRandomBackground();
+          this.resetBackgroundTimer();
+        }, 5 * 60 * 1000);
+      }
+      
+      setupTheme() {
+        this.currentTheme = localStorage.getItem('theme') || 'dark';
+        this.applyTheme(this.currentTheme);
+        
+        this.themeToggle.on('click', () => {
+          this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+          this.applyTheme(this.currentTheme);
+          localStorage.setItem('theme', this.currentTheme);
+          this.updateChartsForTheme();
+        });
+      }
+      
+      applyTheme(theme) {
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          this.themeToggle.html('<i class="fas fa-moon"></i>');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+          this.themeToggle.html('<i class="fas fa-sun"></i>');
+        }
+      }
+      
+      updateChartsForTheme() {
+        Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--chart-text-color');
+        Chart.defaults.scale.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color');
+        
+        Object.values(this.charts).forEach(chart => {
+          if (chart) {
+            chart.update();
+          }
+        });
+      }
+      
+      setupGlassEffects() {
+        document.addEventListener('mousemove', e => {
+          const glassItems = document.querySelectorAll('.investment-item');
+          glassItems.forEach(item => {
+            const rect = item.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            if (Math.abs(rect.left + rect.width/2 - e.clientX) < 150 &&
+                Math.abs(rect.top + rect.height/2 - e.clientY) < 150) {
+              item.style.setProperty('--x', x + 'px');
+              item.style.setProperty('--y', y + 'px');
+            }
+          });
+        });
+      }
+      
+      loadRandomBackground() {
+        if (this.currentImageRequest) {
+          this.currentImageRequest.onload = null;
+        }
+        const width = window.screen.width * window.devicePixelRatio;
+        const height = window.screen.height * window.devicePixelRatio;
+        const timestamp = new Date().getTime();
+        const imageUrl = `https://picsum.photos/${width}/${height}?${timestamp}`;
+        this.currentImageRequest = new Image();
+        this.currentImageRequest.onload = () => {
+          document.body.style.backgroundImage = `url('${imageUrl}')`;
+          document.body.style.backgroundSize = 'cover';
+          document.body.style.backgroundPosition = 'center';
+          document.body.style.opacity = 1;
+        };
+        this.currentImageRequest.src = imageUrl;
+      }
+      
+      setupDatepicker() {
+        try {
+          this.dateInput.attr('data-jdp', '');
+          this.datepicker = jalaliDatepicker.startWatch({
+            dateFormat: 'YYYY/MM/DD',
+            autoClose: true,
+            showTodayBtn: true,
+            showEmptyBtn: true,
+            default: null
+          });
+          const currentDate = moment();
+          const currentJalaliDate = currentDate.format('jYYYY/jM/jD');
+          this.currentDateEl.html(`
+            <i class="far fa-calendar-check"></i>
+            <span>تاریخ امروز: ${this.numberToFarsi(currentJalaliDate)}</span>
+          `);
+        } catch (error) {
+          console.error('Datepicker initialization error:', error);
+          this.showError('خطا در راه‌اندازی تقویم');
+        }
+      }
+      
+      convertToJalaliString(date) {
+        try {
+          return moment(date).format('jYYYY/jM/jD');
+        } catch (error) {
+          console.error('Date conversion error:', error);
+          return '';
+        }
+      }
+      
+      attachEventListeners() {
+        this.form.on('submit', this.handleFormSubmit.bind(this));
+        this.cancelUpdateBtn.on('click', this.resetForm.bind(this));
+        $(document).on('click', '.edit-btn, .delete-btn', this.handleGlobalActions.bind(this));
+        this.updatePricesBtn.on('click', this.handlePriceUpdate.bind(this));
+        this.clearCacheBtn.on('click', this.handleClearCache.bind(this));
+      }
+      
+      handleGlobalActions(event) {
+        const $target = $(event.target).closest('button');
+        const $row = $target.closest('tr');
+        const investmentId = $row.data('id');
+        if ($target.hasClass('edit-btn')) {
+          Swal.close();
+          this.handleEditAction(investmentId);
+        } else if ($target.hasClass('delete-btn')) {
+          this.handleDeleteAction(investmentId);
+        }
+      }
+      
+      async handleEditAction(investmentId) {
+        try {
+          const response = await axios.get(`/investments/${investmentId}`);
+          const investment = response.data;
+          this.typeSelect.val(investment.type);
+          const amount = investment.amount ? Math.floor(investment.amount) : 0;
+          this.amountInput.val(amount);
+          try {
+            this.dateInput.val(investment.date);
+            this.dateInput.trigger('change');
+          } catch (error) {
+            console.error('Date setting error:', error);
+          }
+          this.currentEditInvestment = investment;
+          this.addBtn.addClass('d-none');
+          this.updateBtn.removeClass('d-none');
+          this.cancelUpdateBtn.removeClass('d-none');
+        } catch (error) {
+          console.error('Error fetching investment details:', error);
+          this.showError('خطا در بارگذاری اطلاعات سرمایه‌گذاری');
+        }
+      }
+      
+      async handleDeleteAction(investmentId) {
+        const result = await Swal.fire({
+          title: 'آیا مطمئن هستید؟',
+          text: 'این سرمایه‌گذاری حذف خواهد شد!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'بله، حذف کن',
+          cancelButtonText: 'انصراف'
+        });
+        if (result.isConfirmed) {
+          try {
+            await axios.delete(`/investments/${investmentId}`);
+            await Promise.all([
+              this.loadInvestments(),
+              this.loadInvestmentSummary()
+            ]);
+            this.showSuccess('سرمایه‌گذاری با موفقیت حذف شد');
+          } catch (error) {
+            console.error('Deletion error:', error);
+            this.showError('خطا در حذف سرمایه‌گذاری');
+          }
+        }
+      }
+      
+      async initializeApp() {
+        try {
+          await this.loadInvestmentTypes();
+          await this.loadInvestmentSummary();
+          await this.loadInvestments();
+          await this.loadLatestPrices();
+          
+          setInterval(() => {
+            this.loadLatestPrices();
+            this.loadInvestments();
+            this.loadInvestmentSummary();
+          }, 5 * 60 * 1000);
+        } catch (error) {
+          console.error('Initialization error:', error);
+          this.showError('خطا در بارگذاری اطلاعات');
+        }
+      }
+      
+      async loadInvestmentTypes() {
+        try {
+          const response = await axios.get('/investment-types');
+          this.typeSelect.find('option:not(:first)').remove();
+          response.data.forEach(type => {
+            this.typeSelect.append(`<option value="${type.type}">${type.persianName || type.type}</option>`);
+          });
+        } catch (error) {
+          throw new Error('بارگذاری نوع سرمایه‌گذاری‌ها با خطا مواجه شد');
+        }
+      }
+      
+      async handleClearCache() {
+        try {
+          const result = await axios.post('/clear-cache');
+          if (result.data.success) {
+            Object.keys(this.charts).forEach(key => {
+              if (this.charts[key]) this.charts[key].destroy();
+            });
+            this.charts = {};
+            this.showSuccess('کش با موفقیت حذف شد');
+            this.loadInvestmentSummary();
+            this.loadInvestments();
+          }
+        } catch (error) {
+          console.error('Clear cache error:', error);
+          this.showError('خطا در حذف کش');
+        }
+      }
+
+      async handlePriceUpdate() {
+        try {
+          const loadingToast = Swal.fire({
+            title: 'در حال بروزرسانی قیمت‌ها...',
+            didOpen: () => {
+              Swal.showLoading();
+            },
+            allowOutsideClick: false
+          });
+          const response = await axios.post('/update-prices');
+          if (response.data.success) {
+            await Promise.all([
+              this.loadLatestPrices(),
+              this.loadInvestments(),
+              this.loadInvestmentSummary()
+            ]);
+            Swal.fire({
+              icon: 'success',
+              title: 'بروزرسانی قیمت‌ها با موفقیت انجام شد',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000
+            });
+          } else {
+            this.showError('بروزرسانی قیمت‌ها با خطا مواجه شد');
+          }
+        } catch (error) {
+          console.error('Price update error:', error);
+          this.showError(
+            error.response?.data?.error ||
+            'خطا در بروزرسانی قیمت‌ها. لطفاً مجدداً تلاش کنید.'
+          );
+        }
+      }
+      
+      async loadInvestments() {
+        try {
+          const response = await axios.get('/investments');
+          this.renderInvestments(response.data);
+        } catch (error) {
+          throw new Error('بارگذاری سرمایه‌گذاری‌ها با خطا مواجه شد');
+        }
+      }
+      
+      async loadInvestmentSummary() {
+        try {
+          const response = await axios.get('/investments/summary');
+          const { totalInvestment, totalProfit, chartData, apiStatus, summaryChartMonths } = response.data;
+          this.totalInvestmentEl.text(this.formatCurrency(totalInvestment));
+          this.totalProfitEl.text(this.formatCurrency(totalProfit));
+          $('#summaryChartMonthsTitle').text(summaryChartMonths);
+
+          if (chartData && chartData.labels && chartData.labels.length > 0) {
+            this.createSummaryChart(chartData);
+          } else {
+            $('#summaryChartContainer').hide();
+          }
+          
+          if (apiStatus && !apiStatus.lastConnectionSuccess) {
+            this.showApiWarning(apiStatus.lastError || 'خطا در اتصال به وب سرویس نوسان');
+          } else {
+            this.hideApiWarning();
+          }
+          
+        } catch (error) {
+          console.error('Summary loading error:', error);
+          $('#summaryChartContainer').hide();
+          if (error.response && error.response.data && error.response.data.apiStatus) {
+            const { apiStatus } = error.response.data;
+            if (!apiStatus.lastConnectionSuccess) {
+              this.showApiWarning(apiStatus.lastError || 'خطا در اتصال به وب سرویس نوسان');
+            }
+          }
+          throw new Error('بارگذاری خلاصه سرمایه‌گذاری با خطا مواجه شد');
+        }
+      }
+
+      showApiWarning(message) {
+        if ($('#api-warning').length === 0) {
+          const warningHtml = `
+            <div id="api-warning" class="alert alert-danger mb-4 fade-in" role="alert">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <span id="api-warning-message">${message}</span>
+              <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          `;
+          $('.main-card .card-body').prepend(warningHtml);
+        } else {
+          $('#api-warning-message').text(message);
+        }
+      }
+
+      hideApiWarning() {
+        $('#api-warning').remove();
+      }
+      
+      createSummaryChart(chartData) {
+        $('#summaryChartContainer').show();
+        
+        const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-line-color');
+        const pointColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-point-color');
+        const areaColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-area-color');
+        
+        if (this.charts.summary) {
+          this.charts.summary.data.labels = chartData.labels;
+          this.charts.summary.data.datasets = [{
+            label: 'ارزش کل (تومان)',
+            data: chartData.datasets[0].data,
+            borderColor: lineColor,
+            backgroundColor: areaColor,
+            pointBackgroundColor: pointColor,
+            fill: true
+          }];
+          this.charts.summary.update();
+        } else {
+          const ctx = this.summaryChartCanvas[0].getContext('2d');
+          this.charts.summary = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: chartData.labels,
+              datasets: [{
+                label: 'ارزش کل (تومان)',
+                data: chartData.datasets[0].data,
+                borderColor: lineColor,
+                backgroundColor: areaColor,
+                pointBackgroundColor: pointColor,
+                fill: true
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              layout: { padding: { bottom: 15 } },
+              plugins: {
+                tooltip: {
+                  mode: 'index',
+                  intersect: false,
+                  callbacks: {
+                    label: function(context) {
+                      const value = context.raw;
+                      return `${context.dataset.label}: ${Math.round(value).toLocaleString()} تومان`;
+                    }
+                  }
+                },
+                legend: {
+                  display: false
+                }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { display: false }
+                },
+                y: {
+                  beginAtZero: false,
+                  grid: {
+                    drawBorder: false
+                  },
+                  ticks: {
+                    callback: function(value) {
+                      if (value >= 1000000000) {
+                        return (value / 1000000000).toFixed(1) + ' میلیارد';
+                      } else if (value >= 1000000) {
+                        return (value / 1000000).toFixed(1) + ' میلیون';
+                      } else if (value >= 1000) {
+                        return (value / 1000).toFixed(0) + ' هزار';
+                      }
+                      return value;
+                    }
+                  }
+                }
+              },
+              interaction: {
+                intersect: false,
+                mode: 'index'
+              },
+              elements: {
+                point: {
+                  radius: 0,
+                  hoverRadius: 5
+                },
+                line: {
+                  tension: 0.3
+                }
+              }
+            }
+          });
+        }
+      }
+      
+      async loadLatestPrices() {
+        try {
+          this.pricesLoading.show();
+          const response = await axios.get('/invested-types');
+          this.latestPricesBody.find('.price-item').remove();
+          response.data.forEach((type, index) => {
+            const priceItem = `
+              <div class="price-item fade-in" style="animation-delay: ${index * 0.1}s">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">
+                    <i class="${this.getPriceIcon(type.type)} me-1"></i>
+                    ${type.persianName || type.type}
+                  </span>
+                  <span class="text-light">
+                    ${this.formatCurrency(type.currentPrice)}
+                    <i class="fas fa-coins ms-1"></i>
+                  </span>
+                </div>
+              </div>
+            `;
+            $(priceItem).insertAfter(this.currentDateEl);
+          });
+          this.pricesLoading.hide();
+        } catch (error) {
+          console.error('Failed to load latest prices', error);
+          this.latestPricesBody.find('.price-item').remove();
+          $('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-1"></i> خطا در بارگذاری قیمت‌ها</div>').insertAfter(this.currentDateEl);
+          this.pricesLoading.hide();
+        }
+      }
+      
+      getTypeIcon(type) {
+        const icons = {
+          'abshodeh': 'fa-solid fa-ring',
+          '18ayar': 'fa-solid fa-crown',
+          'gold': 'fa-solid fa-gem',
+          'aave': 'fa-brands fa-ethereum',
+          'ethereum': 'fa-brands fa-ethereum',
+          'usdt': 'fa-solid fa-dollar-sign',
+          'usd_sell': 'fa-solid fa-dollar-sign',
+          'eur_sell': 'fa-solid fa-euro-sign',
+          'gbp': 'fa-solid fa-sterling-sign',
+          'cad': 'fa-solid fa-money-bill-1-wave',
+          'sekkeh': 'fa-solid fa-coins',
+          'coin': 'fa-solid fa-coins',
+          'tether': 'fa-solid fa-dollar-sign',
+          'bitcoin': 'fa-brands fa-bitcoin',
+          'silver': 'fa-solid fa-medal',
+          'realestate': 'fa-solid fa-building',
+          'stock': 'fa-solid fa-chart-line',
+          'try': 'fa-solid fa-lira-sign',
+          'dirham_dubai': 'fa-solid fa-money-bill-wave',
+          'default': 'fa-solid fa-gem'
+        };
+        return icons[type] || icons['default'];
+      }
+      
+      getPriceIcon(type) {
+        return this.getTypeIcon(type);
+      }
+      
+      renderInvestments(investments) {
+        this.investmentTypesContainer.empty();
+        
+        if (!investments.length) {
+          return;
+        }
+        
+        investments.forEach((typeGroup, index) => {
+          const { type, persianName, totalInvestment, totalCurrentValue, totalProfit, profitPercentage, investments, chartData } = typeGroup;
+          const typeName = persianName || type;
+          const typeIcon = this.getTypeIcon(type);
+          const profitColor = profitPercentage >= 0 ? 'text-light' : 'text-danger';
+          
+          const investmentCard = `
+            <div class="col-md-6 mb-3 fade-in" style="animation-delay: ${index * 0.1}s">
+              <div class="investment-item" data-tilt data-tilt-max="2" data-tilt-scale="1.01" data-tilt-speed="1000" data-tilt-perspective="1500" data-tilt-transition="true" data-tilt-glare data-tilt-max-glare="0.15">
+                <div class="card-header">
+                  <div class="d-flex align-items-center">
+                    <i class="${typeIcon} me-2"></i>
+                    <h5 class="mb-0">${typeName}</h5>
+                  </div>
+                  <span class="count-badge">
+                    <i class="fas fa-list-ol me-1"></i>
+                    ${investments.length} مورد
+                  </span>
+                </div>
+                <div class="card-body">
+                  <div class="investment-chart">
+                    <canvas id="chart-${type}"></canvas>
+                  </div>
+                  <div class="info-row">
+                    <span><i class="fas fa-money-bill-wave me-1"></i> کل سرمایه‌گذاری:</span>
+                    <strong class="text-light">${this.formatCurrency(totalInvestment)}</strong>
+                  </div>
+                  <div class="info-row">
+                    <span><i class="fas fa-chart-line me-1"></i> ارزش فعلی:</span>
+                    <strong class="text-light">${this.formatCurrency(totalCurrentValue)}</strong>
+                  </div>
+                  <div class="info-row">
+                    <span><i class="fas fa-chart-line me-1"></i> کل سود:</span>
+                    <strong class="text-light">${this.formatCurrency(totalProfit)}</strong>
+                  </div>
+                  <div class="info-row">
+                    <span><i class="fas fa-percentage me-1"></i> درصد سود:</span>
+                    <strong class="${profitColor} farsi-numbers">
+                      ${this.numberToFarsi(profitPercentage?.toFixed(2) || 0)}٪
+                      ${profitPercentage >= 0 ? '<i class="fas fa-arrow-up ms-1"></i>' : '<i class="fas fa-arrow-down ms-1"></i>'}
+                    </strong>
+                  </div>
+                  <button class="btn btn-teal w-100 mt-3 show-details-btn" data-type="${type}">
+                    <i class="fas fa-info-circle me-1"></i> نمایش جزئیات
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          const $investmentCard = $(investmentCard);
+          $investmentCard.find('.show-details-btn').on('click', () => this.showInvestmentTypeDetails(typeName, investments));
+          this.investmentTypesContainer.append($investmentCard);
+          
+          if (chartData && chartData.labels && chartData.labels.length > 0) {
+            setTimeout(() => this.createTypeChart(type, chartData), 100);
+          }
+        });
+        
+        VanillaTilt.init(document.querySelectorAll(".investment-item"), {
+          max: 2,
+          speed: 1000,
+          scale: 1.01,
+          glare: true,
+          "max-glare": 0.08,
+          transition: true,
+          easing: "cubic-bezier(.03,.98,.52,.99)",
+          perspective: 1500,
+          "full-page-listening": false,
+        });
+      }
+      
+      createTypeChart(type, chartData) {
+        const ctx = document.getElementById(`chart-${type}`).getContext('2d');
+        const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-line-color');
+        const pointColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-point-color');
+        
+        this.charts[type] = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartData.labels,
+            datasets: [{
+              label: chartData.datasets[0].label,
+              data: chartData.datasets[0].data,
+              borderColor: lineColor,
+              pointBackgroundColor: pointColor,
+              fill: false,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { bottom: 0 } },
+            plugins: {
+              tooltip: {
+                mode: 'index',
+                intersect: false,
+                callbacks: {
+                  label: function(context) {
+                    const value = context.raw;
+                    return `${context.dataset.label}: ${Math.round(value).toLocaleString()} تومان`;
+                  }
+                }
+              },
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              x: {
+                display: false
+              },
+              y: {
+                display: false,
+                beginAtZero: false
+              }
+            },
+            elements: {
+              point: {
+                radius: 0,
+                hoverRadius: 4
+              },
+              line: {
+                borderWidth: 2
+              }
+            }
+          }
+        });
+      }
+      
+      showInvestmentTypeDetails(typeName, investments) {
+        const totalAmount = investments.reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
+        const totalProfit = investments.reduce((sum, inv) => sum + parseFloat(inv.profit), 0);
+        const detailsHtml = investments.map(inv => `
+          <tr data-id="${inv.id}">
+            <td class="farsi-numbers">${this.numberToFarsi(inv.date)}</td>
+            <td class="farsi-numbers">${this.formatCurrency(inv.amount)}</td>
+            <td class="farsi-numbers">${this.formatCurrency(inv.profit)}</td>
+            <td>
+              <button class="btn btn-sm btn-primary edit-btn">
+                <i class="fas fa-edit"></i> ویرایش
+              </button>
+              <button class="btn btn-sm btn-danger delete-btn mt-1">
+                <i class="fas fa-trash-alt"></i> حذف
+              </button>
+            </td>
+          </tr>
+        `).join('');
+        
+        Swal.fire({
+          title: `جزئیات سرمایه‌گذاری ${typeName}`,
+          html: `
+            <div class="details-table-container">
+              <table class="table table-striped details-table">
+                <thead>
+                  <tr>
+                    <th>تاریخ</th>
+                    <th>مبلغ</th>
+                    <th>سود</th>
+                    <th>عملیات</th>
+                  </tr>
+                </thead>
+                <tbody>${detailsHtml}</tbody>
+                <tfoot>
+                  <tr>
+                    <td><strong>جمع کل</strong></td>
+                    <td class="farsi-numbers"><strong>${this.formatCurrency(totalAmount)}</strong></td>
+                    <td class="farsi-numbers"><strong>${this.formatCurrency(totalProfit)}</strong></td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          `,
+          width: '800px',
+          confirmButtonText: 'بستن',
+          confirmButtonColor: 'rgba(var(--primary-base), 0.6)'
+        });
+      }
+      
+      handleFormSubmit(event) {
+        event.preventDefault();
+        if (!this.validateForm()) return;
+        
+        const investmentData = {
+          type: this.typeSelect.val(),
+          amount: this.convertToEnglishDigits(this.amountInput.val()),
+          date: this.getFormattedDate()
+        };
+        
+        const actionPromise = this.currentEditInvestment
+          ? this.updateInvestment(investmentData)
+          : this.createInvestment(investmentData);
+          
+        actionPromise
+          .then(() => {
+            this.resetForm();
+            this.loadInvestments();
+            this.loadInvestmentSummary();
+          })
+          .catch(error => {
+            this.showError(error.response?.data?.error || 'خطا در ذخیره سرمایه‌گذاری');
+          });
+      }
+      
+      validateForm() {
+        let isValid = true;
+        
+        if (!this.typeSelect.val()) {
+          this.typeSelect.addClass('is-invalid');
+          isValid = false;
+        } else {
+          this.typeSelect.removeClass('is-invalid');
+        }
+        
+        if (!this.amountInput.val() || parseFloat(this.amountInput.val()) <= 0) {
+          this.amountInput.addClass('is-invalid');
+          isValid = false;
+        } else {
+          this.amountInput.removeClass('is-invalid');
+        }
+        
+        if (!this.getFormattedDate()) {
+          this.dateInput.addClass('is-invalid');
+          isValid = false;
+        } else {
+          this.dateInput.removeClass('is-invalid');
+        }
+        
+        return isValid;
+      }
+      
+      async createInvestment(data) {
+        try {
+          const response = await axios.post('/investments', data);
+          this.showSuccess('سرمایه‌گذاری با موفقیت اضافه شد');
+          return response;
+        } catch (error) {
+          console.error('Error creating investment:', error);
+          this.showError(error.response?.data?.error || 'خطا در ایجاد سرمایه‌گذاری');
+          throw error;
+        }
+      }
+      
+      async updateInvestment(data) {
+        try {
+          const formattedData = {
+            type: data.type,
+            amount: parseFloat(this.convertToEnglishDigits(data.amount)),
+            date: data.date
+          };
+          
+          const response = await axios.put(
+            `/investments/${this.currentEditInvestment.id}`,
+            formattedData
+          );
+          
+          await Promise.all([
+            this.loadInvestments(),
+            this.loadInvestmentSummary()
+          ]);
+          
+          this.showSuccess('سرمایه‌گذاری با موفقیت بروزرسانی شد');
+          this.resetForm();
+          
+          return response;
+        } catch (error) {
+          console.error('Update error:', error);
+          this.showError(
+            error.response?.data?.error ||
+            'خطا در بروزرسانی سرمایه‌گذاری. لطفاً مجدداً تلاش کنید.'
+          );
+          throw error;
+        }
+      }
+      
+      resetForm() {
+        this.form[0].reset();
+        this.typeSelect.prop('selectedIndex', 0);
+        if (this.datepicker) {
+          this.datepicker.hide();
+        }
+        this.currentEditInvestment = null;
+        this.addBtn.removeClass('d-none');
+        this.updateBtn.addClass('d-none');
+        this.cancelUpdateBtn.addClass('d-none');
+        this.typeSelect.removeClass('is-invalid');
+        this.amountInput.removeClass('is-invalid');
+        this.dateInput.removeClass('is-invalid');
+      }
+      
+      formatCurrency(amount) {
+        const numericAmount = parseFloat(amount) || 0;
+        return `${this.numberToFarsi(Math.round(numericAmount).toLocaleString())} تومان`;
+      }
+      
+      numberToFarsi(number) {
+        const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return number.toString().replace(/\d/g, d => farsiDigits[d]);
+      }
+      
+      convertToEnglishDigits(persianNumber) {
+        if (!persianNumber) return '';
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        let englishNumber = persianNumber.toString();
+        persianDigits.forEach((persianDigit, index) => {
+          englishNumber = englishNumber.replace(new RegExp(persianDigit, 'g'), englishDigits[index]);
+        });
+        return englishNumber;
+      }
+      
+      showSuccess(message) {
+        Swal.fire({
+          icon: 'success',
+          title: message,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      }
+      
+      showError(message) {
+        Swal.fire({
+          icon: 'error',
+          title: 'خطا',
+          text: message,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      }
+      
+      getFormattedDate() {
+        try {
+          const dateValue = this.dateInput.val();
+          const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+          if (dateRegex.test(dateValue)) {
+            return dateValue;
+          }
+          return null;
+        } catch (error) {
+          console.error('Date formatting error:', error);
+          return null;
+        }
+      }
+    }
+    
+    new InvestmentTracker();
+  </script>
+</body>
+</html>
