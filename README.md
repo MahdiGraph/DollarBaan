@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="public/assets/img/screenshot.jpg" alt="پیش‌نمایش دلاربان" width="800">
+  <img src="public/assets/img/dashboard.jpg" alt="پیش‌نمایش دلاربان" width="800">
 </p>
 
 ## 📋 معرفی 
