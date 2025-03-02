@@ -631,8 +631,8 @@
                   },
                   ticks: {
                     callback: function(value) {
-                      if (value >= 1000000000000) {
-                        return (value / 1000000000000).toFixed(1) + ' میلیارد';
+                      if (value >= 1000000000) {
+                        return (value / 1000000000).toFixed(2) + ' میلیارد';
                       } else if (value >= 1000000) {
                         return (value / 1000000).toFixed(1) + ' میلیون';
                       } else if (value >= 1000) {
