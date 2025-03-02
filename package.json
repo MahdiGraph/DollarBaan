@@ -6,7 +6,8 @@
   "scripts": {
     "start": "pm2 start ecosystem.config.js",
     "stop": "pm2 stop ecosystem.config.js",
-    "del": "pm2 del ecosystem.config.js --force"
+    "del": "pm2 del ecosystem.config.js --force",
+    "dev": "nodemon app.js"
   },
   "author": "MahdiGraph",
   "license": "MIT",
@@ -21,6 +22,7 @@
     "moment-jalaali": "^0.10.4",
     "mysql2": "^3.12.0",
     "node-cron": "^3.0.3",
+    "nodemon": "^3.1.9",
     "pm2": "^5.4.3",
     "sequelize": "^6.37.5",
     "session-file-store": "^1.5.0",
