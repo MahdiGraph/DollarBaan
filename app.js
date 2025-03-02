@@ -1554,7 +1554,7 @@ async function initializeApplication() {
         
         const PORT = process.env.PORT || 3000;
         const server = app.listen(PORT, () => {
-            console.log(`Dollarbaan is up and running on port ${PORT}`);
+            console.log(`DollarBaan is up and running on port ${PORT}`);
         });
         
         process.on('SIGTERM', () => {
