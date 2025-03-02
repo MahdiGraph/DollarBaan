@@ -17,6 +17,7 @@ logs/*
 !logs/.gitkeep
 sessions/*
 !sessions/.gitkeep
+*.sqlite
 
 # Temp files
 .tmp/
