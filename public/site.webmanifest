@@ -1,0 +1,28 @@
+{
+    "name": "دلاربان - پایش لحظه‌ای دارایی‌ها",
+    "short_name": "دلاربان",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#10b981",
+    "background_color": "#121212",
+    "description": "پایش لحظه‌ای دارایی‌های فیزیکی شما با دلاربان.",
+    "icons": [
+      {
+        "src": "/assets/img/android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/assets/img/android-chrome-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/assets/img/apple-touch-icon.png",
+        "sizes": "180x180",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  }
+  
