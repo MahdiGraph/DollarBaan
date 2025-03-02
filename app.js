@@ -619,6 +619,18 @@ async function updateInvestmentPrices() {
                     logger.error(`Error fetching historical data for ${type}`, error);
                 }
             }
+            
+            // =====================================================================
+            // WARNING: This section is commented out to prevent storing latest API 
+            // prices in the HistoricalPrice table.
+            // 
+            // The "latest" API often returns prices with fewer decimal places than
+            // the historical API, which can cause calculation inconsistencies.
+            // 
+            // Uncommenting this section may lead to inaccurate historical prices
+            // and affect investment value calculations.
+            // =====================================================================
+            /*
             const today = moment().format('YYYY-MM-DD');
             const todayPriceExists = await HistoricalPrice.findOne({
                 where: {
@@ -638,6 +650,8 @@ async function updateInvestmentPrices() {
                 });
                 logger.info(`Added today's price for ${type}: ${currentPrice}`);
             }
+            */
+            // =====================================================================
         }
         cache.clearAll();
         logger.info('Comprehensive price update completed successfully');
@@ -1372,19 +1386,19 @@ app.get('/invested-types', async (req, res) => {
         const investedTypes = await getInvestedTypes();
         const typesWithDetails = await Promise.all(
             investedTypes.map(async (investedType) => {
+                const investmentType = await InvestmentType.findOne({
+                    where: { type: investedType.type }
+                });
+                
                 const latestHistoricalPrice = await HistoricalPrice.findOne({
                     where: { type: investedType.type },
                     order: [['date', 'DESC']]
                 });
-                const currentPrice = latestHistoricalPrice
-                    ? latestHistoricalPrice.close
-                    : (await InvestmentType.findOne({
-                        where: { type: investedType.type }
-                    }))?.currentPrice;
+                
                 return {
                     type: investedType.type,
                     persianName: PERSIAN_NAMES[investedType.type] || investedType.type,
-                    currentPrice: currentPrice || null,
+                    currentPrice: investmentType ? investmentType.currentPrice : null,
                     latestHistoricalPrice: latestHistoricalPrice ? {
                         date: moment(latestHistoricalPrice.date).format('jYYYY/jM/jD'),
                         close: latestHistoricalPrice.close
