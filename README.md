@@ -126,7 +126,7 @@ pm2 save
 
 برای دریافت قیمت‌های به‌روز از سرویس نوسان، نیاز به API Key دارید:
 
-1. برای دریافت کلید API از [navasan.tech](https://navasan.tech) ثبت‌نام کنید
+1. برای دریافت کلید API از طریق [https://navasan.tech/api](https://navasan.tech/api) اقدام کنید
 2. یک API Key دریافت کنید (پلن رایگان کافی است)
 3. کلید را در فایل `.env` در بخش `API_KEY` قرار دهید
 
