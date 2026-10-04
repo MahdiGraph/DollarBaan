@@ -1,12 +1,14 @@
 module.exports = {
   apps: [{
-    name: "DollarBaan",
-    script: "./app.js",
+    name: 'DollarBaan',
+    script: './server/index.js',
+    cwd: __dirname,
     instances: 1,
-    exec_mode: "cluster",
+    exec_mode: 'fork',
     watch: false,
-    env_production: {
-      NODE_ENV: "production"
-    }
-  }]
+    max_memory_restart: '400M',
+    env: {
+      NODE_ENV: 'production',
+    },
+  }],
 };

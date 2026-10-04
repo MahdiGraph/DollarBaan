@@ -1,190 +1,217 @@
-# دلاربان | سیستم پایش ارزش دارایی‌های فیزیکی
+# دلاربان | داشبورد شخصی پایش دارایی‌ها
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.0-brightgreen?logo=v&logoColor=white" alt="Version">
-  <img src="https://img.shields.io/badge/Node.js-16.x-blue?logo=node.js&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/License-MIT-success?logo=opensourceinitiative&logoColor=white" alt="License">
+  <img src="https://img.shields.io/badge/Version-2.0.0-brightgreen" alt="Version">
+  <img src="https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white" alt="Node.js 20+">
+  <img src="https://img.shields.io/badge/Data-Iran%20Market-0f766e" alt="Iran Market data">
+  <img src="https://img.shields.io/badge/License-MIT-success" alt="License">
   <img src="https://img.shields.io/github/stars/MahdiGraph/DollarBaan?style=social" alt="Stars">
-  <img src="https://img.shields.io/github/forks/MahdiGraph/DollarBaan?style=social" alt="Forks">
 </p>
 
 <p align="center">
-  <img src="public/assets/img/dashboard.jpg" alt="داشبورد دلاربان" width="800">
+  <img src="docs/screenshots/dashboard-dark.jpg" alt="داشبورد دلاربان در حالت تیره" width="860">
 </p>
 
 ## 📋 معرفی
 
-**دلاربان** یک ابزار متن‌باز برای پایش و مدیریت ارزش دارایی‌های فیزیکی است. با این برنامه می‌توانید سرمایه‌گذاری‌های خود در انواع ارز، طلا، سکه و رمزارز را ثبت کرده و ارزش آن‌ها را به صورت لحظه‌ای پایش کنید.
+**دلاربان** یک داشبورد مالی شخصی، متن‌باز و قابل‌نصب روی سرور خودتان است. خرید و فروش ارز، طلا، سکه، رمزارز و حتی دارایی‌هایی مثل سپرده بانکی، ملک یا خودرو را ثبت می‌کنید و دلاربان ارزش لحظه‌ای سبد، میانگین قیمت خرید، سود و زیان و روند دارایی‌هایتان را به **تومان** نشان می‌دهد.
 
-این برنامه به طور خاص برای کاربران فارسی‌زبان طراحی شده و با بهره‌گیری از API نوسان، اطلاعات قیمت دارایی‌های مختلف را به صورت خودکار به‌روزرسانی می‌کند.
+قیمت‌ها به‌طور پیش‌فرض از [Iran Market Data](https://github.com/iran-market/iran-market.github.io) دریافت می‌شوند؛ یعنی **رایگان، بدون ثبت‌نام و بدون نیاز به کلید API**. اگر بخواهید، می‌توانید از صفحه تنظیمات منبع را به نوسان تغییر دهید.
 
-با دلاربان می‌توانید:
+## ✨ نسخه ۲ چه چیزهایی دارد؟
 
-- سرمایه‌گذاری‌های خود را در انواع دارایی ثبت کنید
-- از نمودارهای تحلیلی برای بررسی روند قیمت و ارزش پورتفوی استفاده کنید
-- سود و زیان سرمایه‌گذاری‌های خود را محاسبه کنید
-- از قیمت‌های به‌روز بازار بهره‌مند شوید
+- **منبع داده رایگان و پایدار:** Iran Market با بیش از ۲۴۰ دارایی (ارزها، طلا، سکه، صندوق‌های طلا، نقره و رمزارزها) که هر ۳۰ دقیقه به‌روز می‌شود، همراه با تاریخچه روزانه چندساله. اگر GitHub در دسترس نباشد، خودکار از jsDelivr یا آینه اختصاصی شما استفاده می‌شود.
+- **ثبت خرید و فروش واقعی:** مقدار و قیمت واقعی معامله را وارد می‌کنید (یا مبلغ کل را، تا مقدار حساب شود). قیمت بازارِ همان تاریخ خودکار پیشنهاد می‌شود. فروش‌ها، کارمزد، **میانگین قیمت خرید**، **سود محقق‌شده** و **سود باز** محاسبه می‌شوند و فروش بیش از موجودی پذیرفته نمی‌شود.
+- **دارایی دستی:** برای دارایی‌هایی که قیمت آنلاین ندارند (سپرده، ملک، خودرو، سهام و…) قیمت را خودتان ثبت و هر وقت خواستید به‌روز کنید.
+- **داشبورد جدید:** ارزش کل و تغییر امروز، سود و زیان، نمودار روند ارزش سبد در مقابل بهای تمام‌شده، ترکیب سبد بر اساس دسته، دیده‌بان بازار با نمودار کوچک، آخرین تراکنش‌ها و نمایش جدولی داده‌های نمودار.
+- **صفحه هر دارایی:** نمودار قیمت با نقاط خرید و فروش شما، وضعیت موقعیت و تراکنش‌های همان دارایی.
+- **بازار:** جستجو در همه قیمت‌ها با پشتیبانی از ارقام فارسی، فیلتر دسته‌ها و افزودن به دیده‌بان.
+- **رابط کاربری بازطراحی‌شده:** راست‌به‌چپ، فونت وزیرمتن، تقویم شمسی اختصاصی، حالت روشن و تیره، طراحی کامل برای موبایل و قابل افزودن به صفحه اصلی گوشی. **هیچ فایلی از CDN بارگذاری نمی‌شود** و برنامه بدون دسترسی به CDNهای خارجی کار می‌کند.
+- **پشتیبان‌گیری:** خروجی کامل JSON برای بازگردانی و خروجی Excel (CSV) از تراکنش‌ها.
+- **امنیت بهتر:** رمز قابل‌تغییر از تنظیمات (ذخیره با scrypt)، نشست‌های امن در دیتابیس، محدودیت تلاش ورود، محافظت CSRF و هدرهای امنیتی.
+- **انتقال خودکار از نسخه ۱:** داده‌های قبلی بدون از دست رفتن مبلغ سرمایه‌گذاری‌ها منتقل می‌شوند (جزئیات در بخش ارتقا).
+- **نصب ساده:** اجرا با Node.js، با PM2، یا با یک دستور Docker. SQLite پیش‌فرض است و MySQL/MariaDB هم پشتیبانی می‌شود.
 
-## ✨ ویژگی‌های اصلی
+<p align="center">
+  <img src="docs/screenshots/dashboard-light.jpg" alt="داشبورد در حالت روشن" width="860">
+</p>
 
-- **رابط کاربری Glass Morphism**: رابط زیبا با قابلیت تغییر تم روشن/تاریک
-- **به‌روزرسانی قیمت‌ها**: دریافت خودکار قیمت‌های به‌روز از API نوسان
-- **نمودارهای تحلیلی**: نمایش روند تغییرات قیمت و ارزش سرمایه‌گذاری‌ها
-- **تقویم شمسی**: کار با تاریخ‌های هجری شمسی
-- **پشتیبانی از SQLite و MySQL**: انعطاف‌پذیری در انتخاب پایگاه داده
-- **مدیریت کش**: بهینه‌سازی عملکرد و کاهش درخواست‌های API
-- **رابط کاربری واکنش‌گرا**: طراحی متناسب با دسکتاپ و موبایل
+<p align="center">
+  <img src="docs/screenshots/mobile-dashboard.jpg" alt="داشبورد در موبایل" width="260">
+  <img src="docs/screenshots/mobile-form.jpg" alt="فرم ثبت تراکنش" width="260">
+  <img src="docs/screenshots/mobile-asset.jpg" alt="صفحه دارایی" width="260">
+</p>
 
-## 🔧 پیش‌نیازها
+## 🔌 منبع داده‌ها
 
-- <sub>(الزامی)</sub> **Node.js**: نسخه 16.x یا بالاتر
-- <sub>(الزامی)</sub> **کلید وب سرویس نوسان**: برای دریافت از [Navasan.tech](https://navasan.tech) ثبت‌نام کنید (دارای پلن رایگان)
-- <sub>(اختیاری)</sub> **پایگاه داده**:
-  - <sub>(پیشفرض)</sub> **SQLite**: به صورت پیش‌فرض (بدون نیاز به نصب اضافی)
-  - <sub>(اختیاری)</sub> **MySQL/MariaDB**: در صورت تمایل به استفاده
+| منبع | هزینه | کلید API | به‌روزرسانی | پوشش |
+|---|---|---|---|---|
+| **Iran Market** (پیش‌فرض) | رایگان | لازم نیست | هر ۳۰ دقیقه، تاریخچه روزانه | ارز، طلا، سکه، صندوق طلا، فلزات، رمزارز |
+| نوسان | پلن رایگان ۱۲۰ درخواست در ماه | لازم است | به انتخاب شما | ارز، طلا، سکه، تتر |
+
+- قیمت دارایی‌های دلاری (مثل انس طلا یا رمزارزهایی که قیمت تومانی ندارند) با نرخ تتر یا دلار آزاد به تومان تبدیل می‌شود.
+- از صفحه **تنظیمات › منبع قیمت‌ها** می‌توانید منبع، آدرس دریافت داده (GitHub، jsDelivr یا آینه شخصی) و بازه به‌روزرسانی را تغییر دهید و اتصال را آزمایش کنید.
+- اگر از نوسان استفاده می‌کنید، به‌خاطر سقف درخواست‌های پلن رایگان، بازه به‌روزرسانی را ۱۲ یا ۲۴ ساعت بگذارید.
 
 ## 💻 نصب و راه‌اندازی
 
-### دانلود و نصب وابستگی‌ها
+### روش ۱: Node.js
+
+پیش‌نیاز: **Node.js نسخه ۲۰ یا بالاتر** (پیشنهاد: ۲۲ LTS).
 
 ```bash
-# کلون کردن مخزن
 git clone https://github.com/MahdiGraph/DollarBaan.git
 cd DollarBaan
-
-# نصب وابستگی‌ها
 npm install
+cp .env.template .env   # رمز عبور را در این فایل عوض کنید
+npm start
 ```
 
-### تنظیم فایل .env
+حالا برنامه روی `http://localhost:3000` در دسترس است. نام کاربری و رمز پیش‌فرض `admin` و `changeit` است؛ حتماً آن را در `.env` یا از **تنظیمات › امنیت** تغییر دهید.
 
-فایل `.env.template` را به `.env` تغییر نام دهید و API Key خود را در آن قرار دهید:
+### روش ۲: Docker
 
 ```bash
-# کپی فایل نمونه
-cp .env.template .env
-
-# ویرایش فایل
-nano .env
+git clone https://github.com/MahdiGraph/DollarBaan.git
+cd DollarBaan
+cp .env.template .env   # اختیاری؛ برای تغییر نام کاربری و رمز
+docker compose up -d --build
 ```
 
-حداقل، شما باید مقدار `API_KEY` را تنظیم کنید. سایر تنظیمات پیش‌فرض برای شروع کار مناسب هستند.
+داده‌ها در volume با نام `dollarbaan-data` نگه‌داری می‌شوند و با به‌روزرسانی کانتینر از بین نمی‌روند.
 
-### انتخاب پایگاه داده
-
-دلاربان به طور پیش‌فرض از SQLite استفاده می‌کند که بدون نیاز به تنظیمات اضافی کار می‌کند. برای استفاده از MySQL، تنظیمات مربوطه را در فایل `.env` تغییر دهید.
-
-### اجرای برنامه
+### اجرای دائمی با PM2
 
 ```bash
-# اجرای مستقیم در محیط development
-npm run dev
-
-# یا استفاده از PM2 در محیط production
 npm install -g pm2
 pm2 start ecosystem.config.js
+pm2 save && pm2 startup
 ```
 
-پس از اجرا، برنامه روی پورت 3000 در دسترس خواهد بود:
+دستورهای مفید: `pm2 status`، `pm2 logs DollarBaan` و `pm2 restart DollarBaan`.
 
-```
-http://localhost:3000
-```
+## ⚙️ تنظیمات `.env`
 
-## 🚀 مدیریت با PM2
+| متغیر | پیش‌فرض | توضیح |
+|---|---|---|
+| `AUTH_USERNAME` / `AUTH_PASSWORD` | `admin` / `changeit` | اطلاعات ورود. بعد از تغییر رمز از تنظیمات، رمز ذخیره‌شده در دیتابیس ملاک است. |
+| `PORT` | `3000` | پورت برنامه |
+| `TRUST_PROXY` | `false` | اگر پشت nginx، Caddy یا Cloudflare هستید `true` کنید. |
+| `COOKIE_SECURE` | `auto` | کوکی امن فقط روی HTTPS؛ `true` یا `false` برای اجبار |
+| `SESSION_MAX_AGE` | ۷ روز | مدت اعتبار نشست ورود (میلی‌ثانیه) |
+| `DB_DIALECT` | `sqlite` | `sqlite` یا `mysql` |
+| `SQLITE_PATH` | `./database.sqlite` | مسیر فایل دیتابیس SQLite |
+| `DB_NAME`، `DB_USER`، `DB_PASSWORD`، `DB_HOST`، `DB_PORT` | | تنظیمات MySQL/MariaDB |
+| `PRICE_PROVIDER` | `iran-market` | منبع اولیه قیمت (`iran-market` یا `navasan`) |
+| `IRAN_MARKET_MIRROR` | `github` | `github`، `jsdelivr` یا `custom` |
+| `IRAN_MARKET_BASE_URL` | | آدرس آینه اختصاصی پوشه `data` |
+| `NAVASAN_API_KEY` | | کلید نوسان (فقط برای منبع نوسان) |
+| `REFRESH_INTERVAL_MINUTES` | `30` | بازه اولیه به‌روزرسانی قیمت‌ها |
+| `LOG_LEVEL` / `LOG_DIR` | `info` / `./logs` | سطح و پوشه لاگ؛ `LOG_DIR=off` یعنی فقط خروجی کنسول |
 
-برای مدیریت برنامه در محیط production، از دستورات PM2 استفاده کنید:
+منبع قیمت، بازه به‌روزرسانی، واحد نمایش (تومان یا ریال)، بازه نمودار و دیده‌بان از داخل برنامه تنظیم می‌شوند و مقادیر بالا فقط مقدار اولیه‌اند.
+
+## 🔄 ارتقا از نسخه ۱
 
 ```bash
-# مشاهده وضعیت
-pm2 status
+# قبل از هر کاری از فایل دیتابیس نسخه پشتیبان بگیرید
+cp database.sqlite database.backup.sqlite
 
-# راه‌اندازی مجدد
-pm2 restart DollarBaan
-
-# توقف برنامه
-pm2 stop DollarBaan
-
-# حذف از لیست PM2
-pm2 delete DollarBaan
-
-# تنظیم اجرای خودکار در هنگام راه‌اندازی سیستم
-pm2 startup
-pm2 save
+git pull
+npm install
+pm2 restart DollarBaan   # یا npm start
 ```
 
-## 📊 کاربردها
+- فایل `.env` قبلی شما بدون تغییر کار می‌کند. `API_KEY` قدیمی، اگر تنظیم شده باشد، به‌عنوان کلید نوسان استفاده می‌شود، اما منبع پیش‌فرض Iran Market است.
+- در اولین اجرا، پس از دریافت قیمت‌ها، سرمایه‌گذاری‌های نسخه ۱ خودکار به تراکنش خرید تبدیل می‌شوند. **مبلغ هر سرمایه‌گذاری دقیقاً حفظ می‌شود** و مقدار خریداری‌شده از قیمت بازار در همان تاریخ محاسبه می‌شود.
+- اقلامی که در Iran Market معادل ندارند (مثل حواله‌ها) به «دارایی دستی» با آخرین قیمت و تاریخچه قبلی‌شان تبدیل می‌شوند.
+- جدول‌های نسخه ۱ دست نمی‌خورند و انتقال فقط یک بار انجام می‌شود.
 
-دلاربان برای این گروه‌ها مناسب است:
+## 🖥️ راهنمای استفاده
 
-- **سرمایه‌گذاران فردی**: ثبت و پیگیری سرمایه‌گذاری‌های شخصی در ارز، طلا و رمزارز
-- **مشاوران مالی**: کمک به ردیابی و مدیریت سبد دارایی‌های مشتریان
-- **تحلیلگران بازار**: بررسی روند قیمت‌ها و عملکرد دارایی‌های مختلف
-- **کسب‌وکارهای کوچک**: مدیریت دارایی‌های شرکت و ردیابی ارزش آن‌ها
+1. با دکمه **ثبت تراکنش** خرید یا فروش ثبت کنید: دارایی را جستجو کنید، تاریخ شمسی را انتخاب کنید و مقدار یا مبلغ کل را وارد کنید. قیمت بازارِ آن روز خودکار پر می‌شود و قابل ویرایش است.
+2. برای سپرده بانکی یا پول نقد، یک **دارایی دستی** با واحد «تومان» و قیمت ۱ بسازید تا مقدار همان مبلغ باشد.
+3. در صفحه **بازار** دارایی‌های دلخواه را ستاره بزنید تا در **دیده‌بان** داشبورد نمایش داده شوند.
+4. از **تنظیمات › پشتیبان‌گیری** فایل پشتیبان دانلود کنید. همان فایل را می‌توانید روی نصب دیگری بازگردانی کنید.
 
-## 🔑 دریافت API Key نوسان
+## 🔒 نکات امنیتی
 
-برای دریافت قیمت‌های به‌روز از سرویس نوسان، نیاز به API Key دارید:
+- رمز پیش‌فرض را حتماً عوض کنید. تا وقتی عوض نشود، برنامه هشدار نمایش می‌دهد.
+- برای دسترسی از اینترنت، برنامه را پشت HTTPS قرار دهید و `TRUST_PROXY=true` کنید. نمونه تنظیم nginx:
 
-1. برای دریافت کلید API از طریق [https://navasan.tech/api](https://navasan.tech/api) اقدام کنید
-2. یک API Key دریافت کنید (پلن رایگان کافی است)
-3. کلید را در فایل `.env` در بخش `API_KEY` قرار دهید
+```nginx
+server {
+    server_name dollar.example.com;
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
 
-## 🖥️ نحوه استفاده
+## 🛠️ توسعه
 
-1. وارد آدرس `http://localhost:3000` شوید
-2. با نام کاربری و رمز عبور تعیین شده در فایل `.env` وارد شوید (پیش‌فرض: admin/changeit)
-3. در داشبورد اصلی:
-   - سرمایه‌گذاری جدید اضافه کنید
-   - آخرین قیمت‌ها را مشاهده کنید
-   - نمودارها و گزارش‌های تحلیلی را بررسی کنید
-   - قیمت‌ها را به‌روزرسانی کنید
+```bash
+npm run dev   # اجرا با راه‌اندازی مجدد خودکار
+npm test      # اجرای تست‌ها
+```
 
-## 🔄 رفع اشکال
+ساختار پروژه:
 
-در صورت بروز مشکل، موارد زیر را بررسی کنید:
+```
+server/            بک‌اند (Express 5 و Sequelize)
+  providers/       منابع قیمت: Iran Market و نوسان
+  services/        محاسبات سبد، همگام‌سازی قیمت، تنظیمات، احراز هویت، انتقال نسخه ۱
+  routes/          API
+public/            رابط کاربری (JavaScript ماژولار بدون فریم‌ورک و بدون build)
+test/              تست‌ها (node:test)
+```
 
-- **کلید وب سرویس**: اطمینان از صحت و اعتبار API Key نوسان
-- **دسترسی‌های فایل**: بررسی دسترسی‌های نوشتن برای پوشه‌های `logs` و `sessions`
-- **وابستگی‌ها**: اطمینان از نصب کامل وابستگی‌ها
-- **تنظیمات لاگ**: تغییر `LOG_LEVEL` به `debug` برای مشاهده جزئیات بیشتر
+## 🔧 رفع اشکال
 
-## 🔧 فناوری‌های استفاده شده
-
-- **بک‌اند**: Node.js، Express، Sequelize
-- **پایگاه داده**: SQLite (پیش‌فرض)، MySQL (اختیاری)
-- **فرانت‌اند**: JavaScript، Chart.js، Bootstrap
-- **رابط کاربری**: Glass Morphism
-- **تاریخ شمسی**: moment-jalaali
-- **پردازش زمانبندی شده**: node-cron
-- **مدیریت پروسه**: PM2
-- **فونت فارسی**: وزیرمتن
+- **قیمت‌ها دریافت نمی‌شوند:** در تنظیمات دکمه «آزمایش اتصال» را بزنید. اگر GitHub روی سرورتان در دسترس نیست، آدرس دریافت داده را jsDelivr یا یک آینه شخصی بگذارید.
+- **خطای sqlite3 هنگام نصب:** نسخه Node.js را بررسی کنید (۲۰ یا بالاتر) و `npm install` را دوباره اجرا کنید.
+- **جزئیات بیشتر:** `LOG_LEVEL=debug` را تنظیم کنید و فایل‌های پوشه `logs` یا خروجی `pm2 logs` را ببینید.
 
 ## 🙏 قدردانی
 
-- با تشکر از [Navasan.tech](https://navasan.tech) برای ارائه API قیمت‌های لحظه‌ای
-- با تشکر ویژه از [Saber Rastikerdar](https://github.com/rastikerdar) برای فونت [وزیرمتن](https://github.com/rastikerdar/vazirmatn)
+- [Iran Market Data](https://github.com/iran-market/iran-market.github.io) برای داده رایگان بازار (منبع اولیه: TGJU)
+- [نوسان](https://navasan.tech) برای وب‌سرویس قیمت
+- [صابر راستی‌کردار](https://github.com/rastikerdar) برای فونت [وزیرمتن](https://github.com/rastikerdar/vazirmatn)
+- [Chart.js](https://www.chartjs.org) و [Lucide](https://lucide.dev)
 
-## 📄 مجوز استفاده
+قیمت‌ها صرفاً برای اطلاع‌رسانی هستند و توصیه خرید یا فروش محسوب نمی‌شوند.
 
-این پروژه تحت مجوز MIT منتشر شده است. برای جزئیات بیشتر به فایل LICENSE مراجعه کنید.
+## 📄 مجوز
+
+این پروژه تحت مجوز MIT منتشر شده است؛ جزئیات در فایل [LICENCE.md](LICENCE.md).
 
 ## 🤝 مشارکت
 
-از مشارکت شما در توسعه این پروژه استقبال می‌کنیم! لطفاً برای هرگونه پیشنهاد یا گزارش مشکل، یک issue جدید در [مخزن گیت‌هاب](https://github.com/MahdiGraph/DollarBaan) ایجاد کنید.
+پیشنهادها و گزارش‌های خطا را در [Issues](https://github.com/MahdiGraph/DollarBaan/issues) ثبت کنید. Pull Requestها هم با کمال میل پذیرفته می‌شوند.
 
 ---
 
-## English Summary
+## English summary
 
-**DollarBaan** is an open-source financial asset tracker that helps you monitor investments in foreign currencies, gold, coins, and cryptocurrencies. With real-time price updates from Navasan API, it provides analytical charts and performance metrics for your portfolio.
+**DollarBaan** is a self-hosted, open-source personal finance dashboard for Iranian users. Record buys and sells of currencies, gold, coins, crypto and manually priced assets (bank deposits, property, cars) and track portfolio value, average cost, realized and unrealized profit, and history, all in Toman.
 
-The application features a responsive Glass Morphism UI with dark/light themes, full Persian (Jalali) calendar support, and works with both SQLite and MySQL databases.
+- **Free market data by default** from [Iran Market Data](https://github.com/iran-market/iran-market.github.io): no sign-up and no API key, 240+ assets refreshed every 30 minutes, multi-year daily history, and automatic fallback from GitHub to jsDelivr or a custom mirror. Navasan remains available as an optional provider.
+- Buy and sell ledger with average-cost accounting, oversell protection, market price suggestions for any past date, and custom assets.
+- Redesigned RTL interface: Vazirmatn font, Jalali date picker, light and dark themes, mobile layout with add-to-home-screen support, and no external CDN dependencies.
+- JSON backup and restore, CSV export, scrypt password hashing, database-backed sessions, login rate limiting and CSRF protection.
+- Automatic migration of DollarBaan 1.x data that keeps every invested amount.
+- Runs with Node.js 20+, PM2 or Docker Compose, on SQLite (default) or MySQL/MariaDB.
 
-Licensed under MIT license. Contributions are welcome!
+```bash
+git clone https://github.com/MahdiGraph/DollarBaan.git && cd DollarBaan
+npm install && cp .env.template .env && npm start   # http://localhost:3000
+```
 
 ---
 
 <p align="center">
-  <strong>دلاربان</strong> | پایش لحظه‌ای دارایی فیزیکی شما
+  <strong>دلاربان</strong> | پایش دارایی‌های شما، ساده و شخصی
 </p>

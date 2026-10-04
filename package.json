@@ -1,32 +1,38 @@
 {
   "name": "dollarbaan",
-  "version": "1.0.0",
-  "description": "monitoring the value of physical assets",
-  "main": "app.js",
+  "version": "2.0.0",
+  "description": "Self-hosted personal finance dashboard for tracking currency, gold, coin and crypto holdings in Toman, powered by Iran Market data",
+  "main": "server/index.js",
+  "private": true,
   "scripts": {
-    "start": "pm2 start ecosystem.config.js",
-    "stop": "pm2 stop ecosystem.config.js",
-    "del": "pm2 del ecosystem.config.js --force",
-    "dev": "nodemon app.js"
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:delete": "pm2 delete ecosystem.config.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MahdiGraph/DollarBaan.git"
   },
   "author": "MahdiGraph",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.9",
-    "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "moment-jalaali": "^0.10.4",
-    "mysql2": "^3.12.0",
-    "node-cron": "^3.0.3",
-    "nodemon": "^3.1.9",
-    "pm2": "^5.4.3",
-    "sequelize": "^6.37.5",
-    "session-file-store": "^1.5.0",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.5",
+    "sequelize": "^6.37.8",
     "sqlite3": "^5.1.7",
-    "winston": "^3.17.0"
+    "winston": "^3.19.0"
+  },
+  "overrides": {
+    "node-gyp": "^11.5.0",
+    "tar": "^7.5.22",
+    "uuid": "^11.1.1"
   }
 }

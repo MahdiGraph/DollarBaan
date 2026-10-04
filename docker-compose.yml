@@ -1,0 +1,19 @@
+services:
+  dollarbaan:
+    build: .
+    image: dollarbaan:latest
+    container_name: dollarbaan
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      SQLITE_PATH: /app/data/database.sqlite
+      LOG_DIR: "off"
+    volumes:
+      - dollarbaan-data:/app/data
+
+volumes:
+  dollarbaan-data:
