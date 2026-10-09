@@ -1,8 +1,9 @@
 # دلاربان | داشبورد شخصی پایش دارایی‌ها
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-2.0.0-brightgreen" alt="Version">
-  <img src="https://img.shields.io/badge/Node.js-20%2B-339933?logo=node.js&logoColor=white" alt="Node.js 20+">
+  <a href="https://github.com/MahdiGraph/DollarBaan/releases/latest"><img src="https://img.shields.io/github/v/release/MahdiGraph/DollarBaan?label=Download&color=brightgreen" alt="Download"></a>
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android%20%7C%20Server-0f766e" alt="Platforms">
+  <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=node.js&logoColor=white" alt="Node.js 20.19+">
   <img src="https://img.shields.io/badge/Data-Iran%20Market-0f766e" alt="Iran Market data">
   <img src="https://img.shields.io/badge/License-MIT-success" alt="License">
   <img src="https://img.shields.io/github/stars/MahdiGraph/DollarBaan?style=social" alt="Stars">
@@ -14,12 +15,31 @@
 
 ## 📋 معرفی
 
-**دلاربان** یک داشبورد مالی شخصی، متن‌باز و قابل‌نصب روی سرور خودتان است. خرید و فروش ارز، طلا، سکه، رمزارز و حتی دارایی‌هایی مثل سپرده بانکی، ملک یا خودرو را ثبت می‌کنید و دلاربان ارزش لحظه‌ای سبد، میانگین قیمت خرید، سود و زیان و روند دارایی‌هایتان را به **تومان** نشان می‌دهد.
+**دلاربان** یک داشبورد مالی شخصی و متن‌باز است. خرید و فروش ارز، طلا، سکه، رمزارز و حتی دارایی‌هایی مثل سپرده بانکی، ملک یا خودرو را ثبت می‌کنید و دلاربان ارزش لحظه‌ای سبد، میانگین قیمت خرید، سود و زیان و روند دارایی‌هایتان را به **تومان** نشان می‌دهد.
 
-قیمت‌ها به‌طور پیش‌فرض از [Iran Market Data](https://github.com/iran-market/iran-market.github.io) دریافت می‌شوند؛ یعنی **رایگان، بدون ثبت‌نام و بدون نیاز به کلید API**. اگر بخواهید، می‌توانید از صفحه تنظیمات منبع را به نوسان تغییر دهید.
+دلاربان را می‌توانید به‌صورت **برنامه ویندوز، مک، لینوکس و اندروید** نصب کنید (بدون سرور و ثبت‌نام؛ داده‌ها فقط روی دستگاه خودتان) یا روی **سرور شخصی** راه بیندازید تا از همه دستگاه‌ها با رمز عبور به آن دسترسی داشته باشید.
+
+قیمت‌ها به‌طور پیش‌فرض از [Iran Market Data](https://github.com/iran-market/iran-market.github.io) دریافت می‌شوند؛ یعنی **رایگان، بدون ثبت‌نام و بدون نیاز به کلید API**. در نسخه سرور می‌توانید از صفحه تنظیمات منبع را به نوسان تغییر دهید.
+
+## 📥 دانلود
+
+آخرین نسخه را از صفحه **[Releases](https://github.com/MahdiGraph/DollarBaan/releases/latest)** دانلود کنید:
+
+| سیستم‌عامل | فایل |
+|---|---|
+| ویندوز ۱۰ و ۱۱ | `DollarBaan-…-windows-setup.exe` (نصبی) یا `…-windows-portable.exe` (بدون نصب) |
+| مک با تراشه اپل (M1 و جدیدتر) | `DollarBaan-…-mac-arm64.dmg` |
+| مک اینتل | `DollarBaan-…-mac-x64.dmg` |
+| لینوکس | `…-linux-amd64.deb` برای اوبونتو و دبیان، `…-linux-x86_64.AppImage` برای سایر توزیع‌ها |
+| اندروید ۷ و جدیدتر | `DollarBaan-…-android.apk` |
+
+- برنامه‌ها به سرور نیاز ندارند: داده‌ها فقط روی همان دستگاه ذخیره می‌شوند و برنامه جز دریافت فایل‌های عمومی قیمت از GitHub یا jsDelivr به هیچ جایی وصل نمی‌شود.
+- برای انتقال داده بین دستگاه‌ها (یا بین برنامه و نسخه سرور) از **تنظیمات › پشتیبان‌گیری** فایل پشتیبان بگیرید و در مقصد بازیابی کنید.
+- برنامه‌ها امضای تجاری ندارند؛ اگر بار اول هشدار دیدید، راهنمای [اولین اجرا](#-رفع-اشکال) را ببینید.
 
 ## ✨ نسخه ۲ چه چیزهایی دارد؟
 
+- **برنامه دسکتاپ و اندروید (۲.۱):** همان دلاربان به‌صورت برنامه مستقل برای ویندوز، مک، لینوکس و اندروید، کاملاً آفلاین از نظر داده: بدون سرور، بدون حساب کاربری و با ذخیره همه چیز روی دستگاه.
 - **منبع داده رایگان و پایدار:** Iran Market با بیش از ۲۴۰ دارایی (ارزها، طلا، سکه، صندوق‌های طلا، نقره و رمزارزها) که هر ۳۰ دقیقه به‌روز می‌شود، همراه با تاریخچه روزانه چندساله. اگر GitHub در دسترس نباشد، خودکار از jsDelivr یا آینه اختصاصی شما استفاده می‌شود.
 - **ثبت خرید و فروش واقعی:** مقدار و قیمت واقعی معامله را وارد می‌کنید (یا مبلغ کل را، تا مقدار حساب شود). قیمت بازارِ همان تاریخ خودکار پیشنهاد می‌شود. فروش‌ها، کارمزد، **میانگین قیمت خرید**، **سود محقق‌شده** و **سود باز** محاسبه می‌شوند و فروش بیش از موجودی پذیرفته نمی‌شود.
 - **دارایی دستی:** برای دارایی‌هایی که قیمت آنلاین ندارند (سپرده، ملک، خودرو، سهام و…) قیمت را خودتان ثبت و هر وقت خواستید به‌روز کنید.
@@ -53,11 +73,13 @@
 - از صفحه **تنظیمات › منبع قیمت‌ها** می‌توانید منبع، آدرس دریافت داده (GitHub، jsDelivr یا آینه شخصی) و بازه به‌روزرسانی را تغییر دهید و اتصال را آزمایش کنید.
 - اگر از نوسان استفاده می‌کنید، به‌خاطر سقف درخواست‌های پلن رایگان، بازه به‌روزرسانی را ۱۲ یا ۲۴ ساعت بگذارید.
 
-## 💻 نصب و راه‌اندازی
+## 💻 نصب روی سرور
+
+اگر فقط روی یک دستگاه از دلاربان استفاده می‌کنید، [برنامه آماده](#-دانلود) ساده‌ترین راه است. نسخه سرور برای وقتی است که می‌خواهید از چند دستگاه (کامپیوتر، گوشی، مرورگر) به یک سبد مشترک با رمز عبور دسترسی داشته باشید.
 
 ### روش ۱: Node.js
 
-پیش‌نیاز: **Node.js نسخه ۲۰ یا بالاتر** (پیشنهاد: ۲۲ LTS).
+پیش‌نیاز: **Node.js نسخه ۲۰.۱۹ یا بالاتر** (پیشنهاد: ۲۲ LTS).
 
 ```bash
 git clone https://github.com/MahdiGraph/DollarBaan.git
@@ -154,25 +176,61 @@ server {
 ## 🛠️ توسعه
 
 ```bash
-npm run dev   # اجرا با راه‌اندازی مجدد خودکار
+npm run dev   # اجرای سرور با راه‌اندازی مجدد خودکار
 npm test      # اجرای تست‌ها
 ```
 
 ساختار پروژه:
 
 ```
-server/            بک‌اند (Express 5 و Sequelize)
-  providers/       منابع قیمت: Iran Market و نوسان
-  services/        محاسبات سبد، همگام‌سازی قیمت، تنظیمات، احراز هویت، انتقال نسخه ۱
-  routes/          API
-public/            رابط کاربری (JavaScript ماژولار بدون فریم‌ورک و بدون build)
-test/              تست‌ها (node:test)
+public/                  رابط کاربری (JavaScript ماژولار بدون فریم‌ورک و بدون build)
+  assets/js/shared/      منطق مشترک سرور و برنامه‌ها: دفتر تراکنش، منابع قیمت، همگام‌سازی و API
+  assets/js/local/       بک‌اند داخلی برنامه‌ها روی IndexedDB
+server/                  سرور (Express 5 و Sequelize) روی همان منطق مشترک
+desktop/                 برنامه دسکتاپ (Electron)
+mobile/                  برنامه اندروید (Capacitor)
+scripts/                 ساخت آیکون‌ها، همگام‌سازی نسخه، تست اجرای برنامه‌ها، کلید امضای اندروید
+test/                    تست‌ها (node:test)
 ```
+
+رابط کاربری دو حالت دارد: در نسخه سرور درخواست‌ها به API سرور می‌رود و در برنامه‌ها (و هر میزبانی ساده فایل‌های `public/`) همان API داخل خود برنامه اجرا می‌شود.
+
+### ساخت برنامه‌ها
+
+```bash
+# دسکتاپ: اجرا در حالت توسعه، و ساخت فایل نصب برای سیستم‌عامل فعلی در desktop/dist
+cd desktop && npm install
+npm start
+npm run dist
+
+# اندروید: نیاز به JDK 21 و Android SDK
+cd mobile && npm install
+npx cap sync android
+npx cap open android   # باز کردن در Android Studio؛ یا: npm run apk
+```
+
+### انتشار نسخه جدید
+
+با هر تگ نسخه، GitHub Actions همه برنامه‌ها را می‌سازد، روی ویندوز، مک، لینوکس و شبیه‌ساز اندروید اجرا و آزمایش می‌کند و در Releases منتشر می‌کند:
+
+```bash
+# نسخه را در package.json تغییر دهید، سپس:
+npm run version:sync
+git commit -am "Release 2.1.1" && git tag v2.1.1 && git push && git push --tags
+```
+
+یک بار پیش از اولین انتشار، کلید امضای اندروید را بسازید: `bash scripts/android-signing.sh` (کلید بیرون از مخزن ساخته و در Secrets مخزن ذخیره می‌شود؛ از پوشه آن نسخه پشتیبان نگه دارید، چون به‌روزرسانی APK فقط با همین کلید ممکن است).
+
+آیکون‌ها از `public/assets/img/logo.svg` ساخته می‌شوند: `npm install --no-save sharp && node scripts/build-app-icons.js`
 
 ## 🔧 رفع اشکال
 
+- **ویندوز پیام «Windows protected your PC» نشان می‌دهد:** روی «More info» و سپس «Run anyway» بزنید. این پیام به‌خاطر نداشتن گواهی امضای تجاری است.
+- **مک برنامه را باز نمی‌کند:** به System Settings › Privacy & Security بروید و «Open Anyway» را بزنید، یا در ترمینال اجرا کنید: `xattr -dr com.apple.quarantine /Applications/DollarBaan.app`
+- **AppImage روی اوبونتو ۲۴.۰۴ اجرا نمی‌شود:** فایل deb را نصب کنید (پروفایل AppArmor لازم را خودش نصب می‌کند)، یا AppImage را با `--no-sandbox` اجرا کنید.
+- **اندروید اجازه نصب نمی‌دهد:** در تنظیمات گوشی اجازه «نصب برنامه‌های ناشناس» را به مرورگر یا مدیر فایل بدهید. نسخه‌های بعدی روی همین نصب به‌روز می‌شوند و داده‌ها حفظ می‌شود.
 - **قیمت‌ها دریافت نمی‌شوند:** در تنظیمات دکمه «آزمایش اتصال» را بزنید. اگر GitHub روی سرورتان در دسترس نیست، آدرس دریافت داده را jsDelivr یا یک آینه شخصی بگذارید.
-- **خطای sqlite3 هنگام نصب:** نسخه Node.js را بررسی کنید (۲۰ یا بالاتر) و `npm install` را دوباره اجرا کنید.
+- **خطای sqlite3 یا `require` هنگام اجرای سرور:** نسخه Node.js را بررسی کنید (۲۰.۱۹ یا بالاتر) و `npm install` را دوباره اجرا کنید.
 - **جزئیات بیشتر:** `LOG_LEVEL=debug` را تنظیم کنید و فایل‌های پوشه `logs` یا خروجی `pm2 logs` را ببینید.
 
 ## 🙏 قدردانی
@@ -196,14 +254,15 @@ test/              تست‌ها (node:test)
 
 ## English summary
 
-**DollarBaan** is a self-hosted, open-source personal finance dashboard for Iranian users. Record buys and sells of currencies, gold, coins, crypto and manually priced assets (bank deposits, property, cars) and track portfolio value, average cost, realized and unrealized profit, and history, all in Toman.
+**DollarBaan** is an open-source personal finance dashboard for Iranian users. Record buys and sells of currencies, gold, coins, crypto and manually priced assets (bank deposits, property, cars) and track portfolio value, average cost, realized and unrealized profit, and history, all in Toman.
 
+- **Apps for Windows, macOS, Linux and Android** on the [Releases](https://github.com/MahdiGraph/DollarBaan/releases/latest) page: no server or account needed, data stays on the device, prices are fetched straight from the public Iran Market files. Or self-host it to share one portfolio across devices.
 - **Free market data by default** from [Iran Market Data](https://github.com/iran-market/iran-market.github.io): no sign-up and no API key, 240+ assets refreshed every 30 minutes, multi-year daily history, and automatic fallback from GitHub to jsDelivr or a custom mirror. Navasan remains available as an optional provider.
 - Buy and sell ledger with average-cost accounting, oversell protection, market price suggestions for any past date, and custom assets.
 - Redesigned RTL interface: Vazirmatn font, Jalali date picker, light and dark themes, mobile layout with add-to-home-screen support, and no external CDN dependencies.
 - JSON backup and restore, CSV export, scrypt password hashing, database-backed sessions, login rate limiting and CSRF protection.
 - Automatic migration of DollarBaan 1.x data that keeps every invested amount.
-- Runs with Node.js 20+, PM2 or Docker Compose, on SQLite (default) or MySQL/MariaDB.
+- The server runs with Node.js 20.19+, PM2 or Docker Compose, on SQLite (default) or MySQL/MariaDB. The desktop (Electron) and Android (Capacitor) apps run the same shared core on IndexedDB; every tagged version is built, smoke-tested and published by GitHub Actions.
 
 ```bash
 git clone https://github.com/MahdiGraph/DollarBaan.git && cd DollarBaan

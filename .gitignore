@@ -24,6 +24,11 @@ data/
 *.sqlite-shm
 .claude/
 
+# App signing keys (keep them out of the repository; CI reads them from secrets)
+*.jks
+*.keystore
+*.p12
+
 # Temp files
 .tmp/
 .temp/
@@ -46,4 +51,6 @@ Desktop.ini
 # Dist files
 dist/
 build/
+# ...except the desktop app's icons and packaging resources
+!desktop/build/
 coverage/

@@ -1,17 +1,9 @@
 'use strict';
 
 const config = require('../config');
+const { HttpError } = require('../shared').errors;
 
 const USER_AGENT = `DollarBaan/${config.version} (+https://github.com/MahdiGraph/DollarBaan)`;
-
-class HttpError extends Error {
-    constructor(message, { status, url, cause } = {}) {
-        super(message, cause ? { cause } : undefined);
-        this.name = 'HttpError';
-        this.status = status;
-        this.url = url;
-    }
-}
 
 /**
  * GET a JSON document. With `etag`, a 304 answer resolves to { notModified: true }.
@@ -30,7 +22,7 @@ async function getJson(url, { timeoutMs = config.http.timeoutMs, etag, headers =
         });
     } catch (error) {
         const reason = error.name === 'TimeoutError' ? 'timed out' : error.cause?.code || error.message;
-        throw new HttpError(`Request to ${hostOf(url)} failed: ${reason}`, { url, cause: error });
+        throw new HttpError(`Request to ${hostOf(url)} failed: ${reason}`, { url });
     }
 
     if (response.status === 304) return { notModified: true, etag };
@@ -44,8 +36,8 @@ async function getJson(url, { timeoutMs = config.http.timeoutMs, etag, headers =
     const text = await response.text();
     try {
         return { data: JSON.parse(text), etag: response.headers.get('etag') };
-    } catch (error) {
-        throw new HttpError(`Invalid JSON from ${hostOf(url)}`, { url, cause: error });
+    } catch {
+        throw new HttpError(`Invalid JSON from ${hostOf(url)}`, { url });
     }
 }
 

@@ -1,0 +1,207 @@
+name: Release
+
+# Builds the desktop apps (Windows, macOS, Linux) and the Android APK, smoke-tests each one,
+# and publishes them as a GitHub release when a version tag (v2.1.0, ...) is pushed.
+# "Run workflow" on the Actions tab builds and tests everything without publishing.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - name: Tag matches package.json
+        if: github.ref_type == 'tag'
+        run: node scripts/sync-version.js --check "$GITHUB_REF_NAME"
+
+  desktop:
+    name: Desktop (${{ matrix.name }})
+    needs: test
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: macOS, os: macos-latest }
+          - { name: Windows, os: windows-latest }
+          - { name: Linux, os: ubuntu-latest }
+    defaults:
+      run:
+        shell: bash
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Build
+        run: npx electron-builder --${{ runner.os == 'macOS' && 'mac' || runner.os == 'Windows' && 'win' || 'linux' }} --publish never
+      - name: Smoke test (macOS)
+        if: runner.os == 'macOS'
+        run: node ../scripts/smoke.mjs --launch "dist/mac-arm64/DollarBaan.app/Contents/MacOS/DollarBaan" --shot dist/smoke-macos.png
+      - name: Smoke test (Windows)
+        if: runner.os == 'Windows'
+        run: node ../scripts/smoke.mjs --launch "dist/win-unpacked/DollarBaan.exe" --shot dist/smoke-windows.png
+      - name: Smoke test (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a node ../scripts/smoke.mjs --launch "dist/linux-unpacked/dollarbaan" --shot dist/smoke-linux.png -- --no-sandbox
+      - uses: actions/upload-artifact@v7
+        with:
+          name: app-${{ matrix.name }}
+          path: |
+            desktop/dist/*.dmg
+            desktop/dist/*.exe
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: smoke-${{ matrix.name }}
+          path: desktop/dist/smoke-*.png
+          if-no-files-found: ignore
+
+  android:
+    name: Android
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: npm install --no-audit --no-fund
+      - run: npx cap sync android
+      - name: Signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+          elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            echo "::error::Android signing secrets are missing. Run scripts/android-signing.sh once (see README)."
+            exit 1
+          else
+            echo "::warning::No signing secrets: this test APK uses a throwaway key and cannot update an installed release."
+            keytool -genkeypair -keystore "$RUNNER_TEMP/release.keystore" -storetype PKCS12 -storepass throwaway \
+              -alias dollarbaan -keyalg RSA -keysize 2048 -validity 30 -dname "CN=DollarBaan test build" -noprompt
+          fi
+      - name: Build APKs
+        working-directory: mobile/android
+        env:
+          DOLLARBAAN_KEYSTORE: ${{ runner.temp }}/release.keystore
+          DOLLARBAAN_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || 'throwaway' }}
+          DOLLARBAAN_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || 'dollarbaan' }}
+        run: ./gradlew --no-daemon assembleRelease assembleDebug
+      - name: Collect APKs
+        run: |
+          version=$(node -p "require('../package.json').version")
+          apksigner=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)/apksigner
+          mkdir -p dist test-apk
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/DollarBaan-$version-android.apk"
+          cp android/app/build/outputs/apk/debug/app-debug.apk test-apk/app-debug.apk
+          "$apksigner" verify --print-certs "dist/DollarBaan-$version-android.apk"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: app-Android
+          path: mobile/dist/*.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: android-debug-apk
+          path: mobile/test-apk/app-debug.apk
+          if-no-files-found: error
+
+  android-smoke:
+    name: Android smoke test
+    needs: android
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v8
+        with:
+          name: app-Android
+          path: apk
+      - uses: actions/download-artifact@v8
+        with:
+          name: android-debug-apk
+          path: apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
+          script: bash scripts/android-smoke.sh apk/app-debug.apk "$(ls apk/DollarBaan-*-android.apk)" smoke
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: smoke-Android
+          path: smoke/
+          if-no-files-found: ignore
+
+  release:
+    name: Publish release
+    if: github.ref_type == 'tag'
+    needs: [desktop, android, android-smoke]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: app-*
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: sha256sum -- * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "DollarBaan $version" \
+            --notes "$(sed "s/{{VERSION}}/$version/g" .github/release-notes.md)" \
+            --generate-notes

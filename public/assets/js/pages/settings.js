@@ -1,4 +1,5 @@
-import { api } from '../api.js';
+import { api, IS_LOCAL } from '../api.js';
+import { downloadExport } from '../download.js';
 import { store } from '../state.js';
 import { html, icon, setHtml } from '../lib/dom.js';
 import { relativeTime, number, faDigits } from '../format.js';
@@ -16,6 +17,20 @@ const INTERVALS = [
     [720, '۱۲ ساعت'],
     [1440, '۲۴ ساعت'],
 ];
+
+const PROVIDER_NOTES = {
+    'iran-market': 'رایگان و بدون ثبت‌نام · پیش‌فرض',
+    navasan: 'نیازمند کلید API · ارز، طلا و سکه',
+};
+
+/** How this copy of the app is running, for the About section. */
+function runtimeLabel() {
+    if (!IS_LOCAL) return 'نسخه سرور';
+    const capacitor = window.Capacitor;
+    if (capacitor && capacitor.isNativePlatform && capacitor.isNativePlatform()) return 'اپلیکیشن موبایل (داده روی همین گوشی)';
+    if (/Electron/.test(navigator.userAgent)) return 'نسخه دسکتاپ (داده روی همین کامپیوتر)';
+    return 'نسخه وب (داده روی همین مرورگر)';
+}
 
 function segmented(name, options, value) {
     return html`<div class="segmented" role="group" data-segment="${name}">
@@ -90,21 +105,20 @@ export function mount({ view, setTitle }) {
                 <section class="card settings-section" id="source">
                     <header>
                         <h2>منبع قیمت‌ها</h2>
-                        <p>Iran Market رایگان است، کلید نمی‌خواهد و قیمت ارز، طلا، سکه و رمزارز را هر ۳۰ دقیقه منتشر می‌کند. در صورت تمایل می‌توانید از نوسان استفاده کنید.</p>
+                        <p>${IS_LOCAL
+                            ? 'قیمت ارز، طلا، سکه و رمزارز مستقیماً از Iran Market دریافت می‌شود؛ رایگان و بدون نیاز به کلید.'
+                            : 'Iran Market رایگان است، کلید نمی‌خواهد و قیمت ارز، طلا، سکه و رمزارز را هر ۳۰ دقیقه منتشر می‌کند. در صورت تمایل می‌توانید از نوسان استفاده کنید.'}</p>
                     </header>
                     <div class="settings-body">
+                        ${store.providers.length > 1 ? html`
                         <div class="radio-cards" role="radiogroup" aria-label="منبع قیمت">
+                            ${store.providers.map((provider) => html`
                             <label class="radio-card">
-                                <input type="radio" name="provider" value="iran-market" ${draft.provider === 'iran-market' ? html`checked` : ''}>
+                                <input type="radio" name="provider" value="${provider.id}" ${draft.provider === provider.id ? html`checked` : ''}>
                                 <span class="radio-mark"></span>
-                                <span><strong>Iran Market</strong><p>رایگان و بدون ثبت‌نام · پیش‌فرض</p></span>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="provider" value="navasan" ${draft.provider === 'navasan' ? html`checked` : ''}>
-                                <span class="radio-mark"></span>
-                                <span><strong>نوسان</strong><p>نیازمند کلید API · ارز، طلا و سکه</p></span>
-                            </label>
-                        </div>
+                                <span><strong>${provider.name}</strong><p>${PROVIDER_NOTES[provider.id] || ''}</p></span>
+                            </label>`)}
+                        </div>` : ''}
                         <div data-source-fields>${sourceFields()}</div>
                         <div class="field">
                             <label for="refresh">به‌روزرسانی خودکار قیمت‌ها هر</label>
@@ -151,6 +165,18 @@ export function mount({ view, setTitle }) {
                     </div>
                 </section>
 
+                ${IS_LOCAL ? html`
+                <section class="card settings-section" id="device">
+                    <header>
+                        <h2>داده‌های این دستگاه</h2>
+                        <p>تراکنش‌ها و تنظیمات فقط روی همین دستگاه ذخیره می‌شوند و به هیچ سروری فرستاده نمی‌شوند. برای جلوگیری از گم شدن داده، هر چند وقت یک بار فایل پشتیبان بگیرید.</p>
+                    </header>
+                    <div class="settings-body">
+                        <div class="settings-actions">
+                            <button type="button" class="btn btn-danger-ghost" data-reset-local>${icon('trash-2')}<span>پاک کردن همه داده‌های این دستگاه</span></button>
+                        </div>
+                    </div>
+                </section>` : html`
                 <section class="card settings-section" id="security">
                     <header>
                         <h2>امنیت</h2>
@@ -172,7 +198,7 @@ export function mount({ view, setTitle }) {
                             </div>
                         </form>
                     </div>
-                </section>
+                </section>`}
 
                 <section class="card settings-section" id="backup">
                     <header>
@@ -181,8 +207,8 @@ export function mount({ view, setTitle }) {
                     </header>
                     <div class="settings-body">
                         <div class="settings-actions">
-                            <a class="btn btn-secondary" href="/api/export" download>${icon('download')}<span>دانلود فایل پشتیبان</span></a>
-                            <a class="btn btn-secondary" href="/api/export.csv" download>${icon('file-spreadsheet')}<span>خروجی اکسل تراکنش‌ها</span></a>
+                            <button type="button" class="btn btn-secondary" data-download="/api/export">${icon('download')}<span>دانلود فایل پشتیبان</span></button>
+                            <button type="button" class="btn btn-secondary" data-download="/api/export.csv">${icon('file-spreadsheet')}<span>خروجی اکسل تراکنش‌ها</span></button>
                         </div>
                         <div class="field">
                             <span class="field-label">بازگردانی از فایل پشتیبان</span>
@@ -200,7 +226,7 @@ export function mount({ view, setTitle }) {
                     <header><h2>درباره دلاربان</h2></header>
                     <div class="settings-body">
                         <dl class="kv">
-                            <dt>نسخه</dt><dd class="ltr">${store.version}</dd>
+                            <dt>نسخه</dt><dd><span class="ltr">${store.version}</span> · ${runtimeLabel()}</dd>
                             <dt>کد منبع</dt><dd><a href="https://github.com/MahdiGraph/DollarBaan" target="_blank" rel="noopener">github.com/MahdiGraph/DollarBaan</a></dd>
                             <dt>داده بازار</dt><dd><a href="https://github.com/iran-market/iran-market.github.io" target="_blank" rel="noopener">Iran Market Data</a> <span class="muted">(منبع اولیه: TGJU)</span></dd>
                         </dl>
@@ -328,6 +354,31 @@ export function mount({ view, setTitle }) {
                     notify.success(value === 'rial' ? 'مبالغ به ریال نمایش داده می‌شوند' : 'مبالغ به تومان نمایش داده می‌شوند');
                 }
                 if (name === 'range') await store.savePreferences({ chartRange: value });
+            } catch (error) {
+                notify.error(error.message);
+            }
+            return;
+        }
+        const download = event.target.closest('[data-download]');
+        if (download) {
+            try {
+                await downloadExport(download.dataset.download);
+            } catch (error) {
+                notify.error(error.message || 'ساخت فایل ناموفق بود');
+            }
+            return;
+        }
+        if (event.target.closest('[data-reset-local]')) {
+            const confirmed = await confirmDialog({
+                title: 'پاک کردن همه داده‌ها',
+                message: 'همه تراکنش‌ها، دارایی‌های دستی و تنظیمات این دستگاه برای همیشه پاک می‌شوند. اگر فایل پشتیبان ندارید، اول آن را دانلود کنید.',
+                confirmText: 'همه پاک شود',
+                danger: true,
+            });
+            if (!confirmed) return;
+            try {
+                await api.post('/api/local/reset');
+                window.location.reload();
             } catch (error) {
                 notify.error(error.message);
             }

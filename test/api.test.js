@@ -35,7 +35,7 @@ const { initDatabase, sequelize } = require('../server/db');
 const { settings } = require('../server/services/settings');
 const { market } = require('../server/services/market');
 const { createApp } = require('../server/app');
-const { tehranDate, addDays } = require('../server/lib/dates');
+const { tehranDate, addDays } = require('../public/assets/js/shared/dates.js');
 
 const TODAY = tehranDate();
 

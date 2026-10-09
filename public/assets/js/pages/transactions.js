@@ -9,6 +9,7 @@ import { avatar, assetCell } from '../ui/asset-visuals.js';
 import { openTransactionForm } from '../ui/transaction-form.js';
 import { confirmDialog } from '../ui/dialog.js';
 import { notify } from '../ui/toast.js';
+import { downloadExport } from '../download.js';
 
 function monthKey(iso) {
     const { jy, jm } = jalaliParts(iso);
@@ -150,7 +151,7 @@ export function mount({ view, setTitle }) {
                     ${symbols.map(([symbol, name]) => html`<option value="${symbol}" ${filters.symbol === symbol ? html`selected` : ''}>${name}</option>`)}
                 </select>
                 <span class="spacer"></span>
-                <a class="btn btn-secondary" href="/api/export.csv" download>${icon('file-spreadsheet')}<span>خروجی اکسل</span></a>
+                <button type="button" class="btn btn-secondary" data-download="/api/export.csv">${icon('file-spreadsheet')}<span>خروجی اکسل</span></button>
             </div>
             <div data-results></div>`);
         renderResults();
@@ -207,6 +208,11 @@ export function mount({ view, setTitle }) {
         const del = event.target.closest('[data-delete]');
         if (del) {
             remove(del.dataset.delete);
+            return;
+        }
+        const download = event.target.closest('[data-download]');
+        if (download) {
+            downloadExport(download.dataset.download).catch((error) => notify.error(error.message || 'ساخت فایل ناموفق بود'));
             return;
         }
         if (event.target.closest('[data-add]')) openTransactionForm();

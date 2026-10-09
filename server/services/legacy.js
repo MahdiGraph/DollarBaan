@@ -9,9 +9,11 @@ const { QueryTypes } = require('sequelize');
 const { sequelize, Transaction, Setting, PricePoint, listTables } = require('../db');
 const { market } = require('./market');
 const { settings } = require('./settings');
-const { closeAsOf } = require('./ledger');
-const { tehranDate, isIsoDate, diffDays } = require('../lib/dates');
+const { ledger, dates } = require('../shared');
 const logger = require('../logger');
+
+const { closeAsOf } = ledger;
+const { tehranDate, isIsoDate, diffDays } = dates;
 
 const LEGACY_SYMBOLS = {
     usd_sell: 'USD_IRR_FREE', usd: 'USD_IRR_FREE',

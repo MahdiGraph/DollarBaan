@@ -1,10 +1,8 @@
-'use strict';
-
-const { getJson } = require('../lib/http');
-const { tehranDate } = require('../lib/dates');
-
 // Public, key-less JSON published by https://github.com/iran-market/iran-market.github.io
-const MIRRORS = {
+// Shared by the Node server and the in-app (local) backend.
+import { tehranDate } from '../dates.js';
+
+export const MIRRORS = {
     github: 'https://raw.githubusercontent.com/iran-market/iran-market.github.io/main/data',
     jsdelivr: 'https://cdn.jsdelivr.net/gh/iran-market/iran-market.github.io@main/data',
 };
@@ -81,7 +79,7 @@ function mapCategory(item, pair, bySymbol) {
  * Turns latest-toman.json into DollarBaan quotes. Prices of IRT assets are in
  * toman; USD assets keep their dollar price plus the symbol used to convert it.
  */
-function normalizeLatest(payload, historySymbols = new Set(), now = Date.now()) {
+export function normalizeLatest(payload, historySymbols = new Set(), now = Date.now()) {
     const categories = payload && payload.data && payload.data.categories;
     if (!categories || typeof categories !== 'object') {
         throw new Error('Unexpected latest-toman.json format');
@@ -152,7 +150,7 @@ function normalizeLatest(payload, historySymbols = new Set(), now = Date.now()) 
     return quotes;
 }
 
-function normalizeIndex(payload) {
+export function normalizeIndex(payload) {
     const list = payload && Array.isArray(payload.data) ? payload.data : [];
     const index = new Map();
     for (const entry of list) {
@@ -168,7 +166,7 @@ function normalizeIndex(payload) {
     return index;
 }
 
-function normalizeHistory(payload) {
+export function normalizeHistory(payload) {
     const rows = payload && Array.isArray(payload.data) ? payload.data : [];
     const out = [];
     for (const row of rows) {
@@ -192,7 +190,7 @@ function normalizeHistory(payload) {
     return out;
 }
 
-function orderBases(mirror, customUrl) {
+export function orderBases(mirror, customUrl) {
     const bases = [];
     const custom = String(customUrl || '').trim().replace(/\/+$/, '');
     if (mirror === 'custom' && custom) bases.push(custom);
@@ -201,12 +199,13 @@ function orderBases(mirror, customUrl) {
     return bases;
 }
 
-class IranMarketProvider {
-    constructor({ mirror = 'github', customUrl = '', logger = console } = {}) {
+export class IranMarketProvider {
+    constructor({ mirror = 'github', customUrl = '', logger = console, fetchJson } = {}) {
         this.id = 'iran-market';
         this.name = 'Iran Market';
         this.bases = orderBases(mirror, customUrl);
         this.logger = logger;
+        this.fetchJson = fetchJson;
         this.etagCache = new Map();
         this.index = null;
         this.indexLoadedAt = 0;
@@ -221,7 +220,7 @@ class IranMarketProvider {
             const url = `${base}/${file}`;
             const cached = cache ? this.etagCache.get(url) : null;
             try {
-                const result = await getJson(url, { etag: cached && cached.etag });
+                const result = await this.fetchJson(url, { etag: cached && cached.etag });
                 if (result.notModified && cached) return cached.data;
                 if (cache && result.etag) this.etagCache.set(url, { etag: result.etag, data: result.data });
                 return result.data;
@@ -279,12 +278,3 @@ class IranMarketProvider {
         return { publishedAt: payload.meta && payload.meta.published_at, sample: count };
     }
 }
-
-module.exports = {
-    IranMarketProvider,
-    MIRRORS,
-    normalizeLatest,
-    normalizeIndex,
-    normalizeHistory,
-    orderBases,
-};

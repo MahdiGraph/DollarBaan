@@ -4,7 +4,7 @@ process.env.LOG_DIR = 'off';
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const dates = require('../server/lib/dates');
+const dates = require('../public/assets/js/shared/dates.js');
 const { parseLegacyDate, unitRatio, priceOn } = require('../server/services/legacy');
 
 test('tehranDate uses the Tehran calendar day', () => {

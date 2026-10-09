@@ -1,7 +1,5 @@
-'use strict';
-
-const { getJson } = require('../lib/http');
-const { tehranDate, tehranMidnightUnix, addMonths } = require('../lib/dates');
+// Shared by the Node server and the in-app (local) backend.
+import { tehranDate, tehranMidnightUnix, addMonths } from '../dates.js';
 
 const BASE_URL = 'https://api.navasan.tech';
 
@@ -66,7 +64,7 @@ function num(value) {
     return Number.isFinite(parsed) ? parsed : null;
 }
 
-function normalizeLatest(payload) {
+export function normalizeLatest(payload) {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
         throw new Error('Unexpected response from Navasan');
     }
@@ -104,7 +102,7 @@ function normalizeLatest(payload) {
     return quotes;
 }
 
-function normalizeHistory(payload) {
+export function normalizeHistory(payload) {
     const rows = Array.isArray(payload) ? payload : [];
     const out = [];
     for (const row of rows) {
@@ -125,12 +123,13 @@ function normalizeHistory(payload) {
     return out;
 }
 
-class NavasanProvider {
-    constructor({ apiKey = '', logger = console } = {}) {
+export class NavasanProvider {
+    constructor({ apiKey = '', logger = console, fetchJson } = {}) {
         this.id = 'navasan';
         this.name = 'نوسان';
         this.apiKey = String(apiKey || '').trim();
         this.logger = logger;
+        this.fetchJson = fetchJson;
         // The free plan allows ~120 calls a month: fetch a history once, then grow it from snapshots.
         this.backfillOnly = true;
         this.historyRefreshMs = Infinity;
@@ -147,7 +146,7 @@ class NavasanProvider {
     }
 
     async fetchLatest() {
-        const { data } = await getJson(this.url('latest'));
+        const { data } = await this.fetchJson(this.url('latest'));
         const quotes = normalizeLatest(data);
         const newest = Math.max(...quotes.map((quote) => (quote.time ? quote.time.getTime() : 0)));
         return { quotes, publishedAt: newest > 0 ? new Date(newest).toISOString() : null };
@@ -164,7 +163,7 @@ class NavasanProvider {
         if (!item) return [];
         const today = tehranDate();
         const start = from || addMonths(today, -36);
-        const { data } = await getJson(this.url('ohlcSearch', {
+        const { data } = await this.fetchJson(this.url('ohlcSearch', {
             item: item.key,
             start: String(tehranMidnightUnix(start)),
             end: String(tehranMidnightUnix(today) + 86399),
@@ -173,11 +172,9 @@ class NavasanProvider {
     }
 
     async test() {
-        const { data } = await getJson(this.url('latest', { item: 'usd_sell' }));
+        const { data } = await this.fetchJson(this.url('latest', { item: 'usd_sell' }));
         // With `item`, Navasan may answer with the bare quote instead of a keyed object.
         const payload = data && typeof data === 'object' && 'value' in data ? { usd_sell: data } : data;
         return { publishedAt: null, sample: normalizeLatest(payload).length };
     }
 }
-
-module.exports = { NavasanProvider, normalizeLatest, normalizeHistory };

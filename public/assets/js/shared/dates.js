@@ -1,8 +1,7 @@
-'use strict';
-
+// Shared by the Node server and the in-app (local) backend.
 // Every stored date is a plain YYYY-MM-DD "market day" in Tehran time.
 const TEHRAN = 'Asia/Tehran';
-const DAY_MS = 24 * 60 * 60 * 1000;
+export const DAY_MS = 24 * 60 * 60 * 1000;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 const tehranParts = new Intl.DateTimeFormat('en-US', {
@@ -26,29 +25,29 @@ function partsOf(formatter, date) {
 }
 
 /** Tehran calendar day (YYYY-MM-DD) of an instant. */
-function tehranDate(input = new Date()) {
+export function tehranDate(input = new Date()) {
     const date = input instanceof Date ? input : new Date(input);
     if (Number.isNaN(date.getTime())) return null;
     const { year, month, day } = partsOf(tehranParts, date);
     return `${year}-${month}-${day}`;
 }
 
-function isIsoDate(value) {
+export function isIsoDate(value) {
     if (typeof value !== 'string' || !ISO_DATE.test(value)) return false;
     const date = new Date(`${value}T00:00:00Z`);
     return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
-function addDays(iso, days) {
+export function addDays(iso, days) {
     const date = new Date(`${iso}T00:00:00Z`);
     return new Date(date.getTime() + days * DAY_MS).toISOString().slice(0, 10);
 }
 
-function diffDays(fromIso, toIso) {
+export function diffDays(fromIso, toIso) {
     return Math.round((Date.parse(`${toIso}T00:00:00Z`) - Date.parse(`${fromIso}T00:00:00Z`)) / DAY_MS);
 }
 
-function addMonths(iso, months) {
+export function addMonths(iso, months) {
     const date = new Date(`${iso}T00:00:00Z`);
     const day = date.getUTCDate();
     date.setUTCDate(1);
@@ -59,27 +58,16 @@ function addMonths(iso, months) {
 }
 
 /** Jalali date (YYYY/MM/DD, Latin digits) of a YYYY-MM-DD day. */
-function toJalali(iso) {
+export function toJalali(iso) {
     const { year, month, day } = partsOf(jalaliParts, new Date(`${iso}T12:00:00Z`));
     return `${year}/${month}/${day}`;
 }
 
-function faDigits(value) {
+export function faDigits(value) {
     return String(value).replace(/\d/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'[digit]);
 }
 
 /** Unix seconds of Tehran midnight at the start of the given day. */
-function tehranMidnightUnix(iso) {
+export function tehranMidnightUnix(iso) {
     return Math.floor(Date.parse(`${iso}T00:00:00+03:30`) / 1000);
 }
-
-module.exports = {
-    tehranDate,
-    isIsoDate,
-    addDays,
-    addMonths,
-    diffDays,
-    toJalali,
-    faDigits,
-    tehranMidnightUnix,
-};

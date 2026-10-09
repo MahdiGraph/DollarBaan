@@ -1,12 +1,10 @@
-'use strict';
-
 // Pure portfolio math. Amounts are toman; dates are YYYY-MM-DD strings.
 // Cost basis uses the average-cost method: a sale removes cost at the running
 // average price and the difference to the sale proceeds is realized profit.
 
-const { addDays, diffDays } = require('../lib/dates');
+import { addDays, diffDays } from './dates.js';
 
-const EPSILON = 1e-9;
+export const EPSILON = 1e-9;
 
 function timeOf(tx) {
     const value = tx.createdAt instanceof Date ? tx.createdAt.getTime() : Date.parse(tx.createdAt);
@@ -14,7 +12,7 @@ function timeOf(tx) {
 }
 
 /** Chronological order; on the same day buys come first so intraday round trips work. */
-function sortTransactions(transactions) {
+export function sortTransactions(transactions) {
     return [...transactions].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0)
         || (a.side === b.side ? 0 : a.side === 'buy' ? -1 : 1)
         || timeOf(a) - timeOf(b));
@@ -74,7 +72,7 @@ function apply(state, tx) {
     return state;
 }
 
-function replay(transactions) {
+export function replay(transactions) {
     const states = new Map();
     for (const tx of sortTransactions(transactions)) {
         if (!states.has(tx.symbol)) states.set(tx.symbol, emptyState());
@@ -84,7 +82,7 @@ function replay(transactions) {
 }
 
 /** First sale that sells more than was held at that point, or null. */
-function findOversell(transactions) {
+export function findOversell(transactions) {
     const held = new Map();
     for (const tx of sortTransactions(transactions)) {
         const available = held.get(tx.symbol) || 0;
@@ -110,7 +108,7 @@ function pct(part, whole) {
  * quotes: Map(symbol -> { price, prevClose }) in toman; missing quotes fall back to
  * the latest transaction price so a holding never silently counts as zero.
  */
-function summarize(transactions, quotes = new Map()) {
+export function summarize(transactions, quotes = new Map()) {
     const holdings = [];
     const closed = [];
     const totals = {
@@ -181,7 +179,7 @@ function summarize(transactions, quotes = new Map()) {
 }
 
 /** Sample dates from start to end (inclusive), evenly spaced backwards from end. */
-function sampleDates(start, end, maxPoints = 160) {
+export function sampleDates(start, end, maxPoints = 160) {
     if (!start || !end || start > end) return end ? [end] : [];
     const span = diffDays(start, end);
     const step = Math.max(1, Math.ceil(span / Math.max(1, maxPoints - 1)));
@@ -206,7 +204,7 @@ function makeCursor(series) {
  * seriesBySymbol: Map(symbol -> [{ date, close }]) sorted by date, toman.
  * currentPrices: Map(symbol -> price) used for `today`.
  */
-function buildTimeline({ transactions, seriesBySymbol = new Map(), currentPrices = new Map(), dates, today }) {
+export function buildTimeline({ transactions, seriesBySymbol = new Map(), currentPrices = new Map(), dates, today }) {
     const sorted = sortTransactions(transactions);
     const states = new Map();
     const lastTrade = new Map();
@@ -251,7 +249,7 @@ function buildTimeline({ transactions, seriesBySymbol = new Map(), currentPrices
  * Profit over a timeline window: change of (value − cost + realized) between the
  * first and last point, relative to the starting value plus money added meanwhile.
  */
-function windowPerformance(points, transactions) {
+export function windowPerformance(points, transactions) {
     if (points.length < 2) return null;
     const first = points[0];
     const last = points[points.length - 1];
@@ -268,7 +266,7 @@ function windowPerformance(points, transactions) {
 }
 
 /** Latest close at or before `date` (binary search). */
-function closeAsOf(series, date) {
+export function closeAsOf(series, date) {
     let lo = 0;
     let hi = series.length - 1;
     let found = null;
@@ -285,7 +283,7 @@ function closeAsOf(series, date) {
 }
 
 /** Converts a native-currency series to toman with a rate series (as-of join). */
-function convertSeries(series, rateSeries) {
+export function convertSeries(series, rateSeries) {
     if (!rateSeries) return series;
     const out = [];
     const rateAt = makeCursor(rateSeries);
@@ -297,22 +295,10 @@ function convertSeries(series, rateSeries) {
 }
 
 /** Merges two date-sorted series; `primary` wins on equal dates. */
-function mergeSeries(secondary, primary) {
+export function mergeSeries(secondary, primary) {
     if (!secondary.length) return primary;
     if (!primary.length) return secondary;
     const byDate = new Map(secondary.map((point) => [point.date, point]));
     for (const point of primary) byDate.set(point.date, point);
     return [...byDate.values()].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 }
-
-module.exports = {
-    replay,
-    findOversell,
-    summarize,
-    sampleDates,
-    buildTimeline,
-    windowPerformance,
-    closeAsOf,
-    convertSeries,
-    mergeSeries,
-};

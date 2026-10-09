@@ -40,7 +40,7 @@ export function setHtml(element, content) {
 }
 
 export function icon(name, className = '') {
-    return raw(`<svg class="icon${className ? ` ${className}` : ''}" aria-hidden="true"><use href="/assets/icons.svg#${name}"></use></svg>`);
+    return raw(`<svg class="icon${className ? ` ${className}` : ''}" aria-hidden="true"><use href="assets/icons.svg#${name}"></use></svg>`);
 }
 
 export const $ = (selector, root = document) => root.querySelector(selector);

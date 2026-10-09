@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launch screen before Android 12 (newer versions show the system splash with the app icon). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item
+        android:width="112dp"
+        android:height="112dp"
+        android:drawable="@drawable/splash_logo"
+        android:gravity="center" />
+</layer-list>

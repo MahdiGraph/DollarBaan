@@ -1,0 +1,14 @@
+{
+  "appId": "io.github.mahdigraph.dollarbaan",
+  "appName": "دلاربان",
+  "webDir": "../public",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "localhost"
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css"
+    }
+  }
+}

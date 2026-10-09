@@ -16,3 +16,5 @@ test
 scripts
 Dockerfile
 docker-compose.yml
+desktop
+mobile

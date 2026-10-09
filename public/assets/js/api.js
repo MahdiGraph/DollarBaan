@@ -1,3 +1,8 @@
+import { MODE } from './runtime-config.js';
+
+/** True when the app runs its backend on the device (desktop/mobile/static web builds). */
+export const IS_LOCAL = MODE === 'local';
+
 export class ApiError extends Error {
     constructor(message, status = 0, code = null) {
         super(message);
@@ -7,7 +12,23 @@ export class ApiError extends Error {
     }
 }
 
+let localBackend = null;
+
+async function localRequest(method, url, body) {
+    if (!localBackend) localBackend = import('./local/backend.js');
+    const backend = await localBackend;
+    try {
+        return await backend.handle(method, url, body === undefined ? undefined : JSON.parse(JSON.stringify(body)));
+    } catch (error) {
+        if (error && error.name === 'AppError') throw new ApiError(error.message, error.status, error.code);
+        console.error(error);
+        throw new ApiError('خطای داخلی برنامه رخ داد؛ صفحه را دوباره باز کنید');
+    }
+}
+
 async function request(method, url, body) {
+    if (IS_LOCAL) return localRequest(method, url, body);
+
     const headers = { 'X-Requested-With': 'DollarBaan', Accept: 'application/json' };
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     let response;
@@ -46,3 +67,8 @@ export const api = {
     put: (url, body = {}) => request('PUT', url, body),
     del: (url) => request('DELETE', url),
 };
+
+/** Asks the in-app backend for a download ({ filename, type, body }). Local mode only. */
+export async function localDownload(url) {
+    return localRequest('GET', url);
+}

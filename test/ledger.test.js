@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const ledger = require('../server/services/ledger');
+const ledger = require('../public/assets/js/shared/ledger.js');
 
 const tx = (overrides) => ({
     id: Math.random().toString(36).slice(2),

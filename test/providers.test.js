@@ -2,8 +2,8 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const iranMarket = require('../server/providers/iranMarket');
-const navasan = require('../server/providers/navasan');
+const iranMarket = require('../public/assets/js/shared/providers/iran-market.js');
+const navasan = require('../public/assets/js/shared/providers/navasan.js');
 
 const NOW = Date.parse('2026-10-04T10:00:00Z');
 const fresh = '2026-10-04T09:30:00.000Z';

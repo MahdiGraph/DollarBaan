@@ -1,5 +1,5 @@
 import { store } from './state.js';
-import { api } from './api.js';
+import { api, IS_LOCAL } from './api.js';
 import { html, icon, setHtml, $, $$ } from './lib/dom.js';
 import { relativeTime } from './format.js';
 import { notify } from './ui/toast.js';
@@ -47,6 +47,11 @@ function resolve() {
 }
 
 async function navigate() {
+    // Leaving a page (e.g. Android back) also closes any open dialog.
+    for (const dialog of $$('dialog[open]')) {
+        const close = dialog.querySelector('[data-close]');
+        if (close) close.click();
+    }
     const { route, params } = resolve();
     if (current && current.instance && current.instance.unmount) current.instance.unmount();
     const view = $('#view');
@@ -187,7 +192,12 @@ async function start() {
     store.on('account', renderBanner);
     $('#statusPill').addEventListener('click', syncNow);
     $('#themeBtn').addEventListener('click', toggleTheme);
-    $('#logoutBtn').addEventListener('click', logout);
+    if (IS_LOCAL) $('#logoutBtn').hidden = true;
+    else $('#logoutBtn').addEventListener('click', logout);
+    const capacitor = window.Capacitor;
+    if (capacitor && capacitor.isNativePlatform && capacitor.isNativePlatform()) {
+        import('./native.js').then((module) => module.setupNative()).catch((error) => console.error(error));
+    }
     $('#addTxBtn').addEventListener('click', () => openTransactionForm());
 
     const topbar = $('#topbar');

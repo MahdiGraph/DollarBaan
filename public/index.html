@@ -12,20 +12,20 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="دلاربان">
     <title>دلاربان</title>
-    <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="preload" href="/assets/fonts/Vazirmatn-Variable.woff2" as="font" type="font/woff2" crossorigin>
-    <script src="/assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="preload" href="assets/fonts/Vazirmatn-Variable.woff2" as="font" type="font/woff2" crossorigin>
+    <script src="assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
     <a class="skip-link" href="#view">رفتن به محتوای اصلی</a>
     <div class="app">
         <aside class="sidebar" aria-label="منوی اصلی">
             <a class="brand" href="#/" aria-label="دلاربان، داشبورد">
-                <img class="brand-mark" src="/assets/img/logo.svg" alt="" width="40" height="40">
+                <img class="brand-mark" src="assets/img/logo.svg" alt="" width="40" height="40">
                 <div>
                     <span class="brand-name">دلاربان</span>
                     <span class="brand-tag">پایش دارایی‌های شما</span>
@@ -33,25 +33,25 @@
             </a>
             <nav class="nav">
                 <a class="nav-item" href="#/" data-route="dashboard" title="داشبورد">
-                    <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#layout-dashboard"></use></svg><span>داشبورد</span>
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-dashboard"></use></svg><span>داشبورد</span>
                 </a>
                 <a class="nav-item" href="#/holdings" data-route="holdings" title="دارایی‌های من">
-                    <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#wallet"></use></svg><span>دارایی‌های من</span>
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#wallet"></use></svg><span>دارایی‌های من</span>
                 </a>
                 <a class="nav-item" href="#/transactions" data-route="transactions" title="تراکنش‌ها">
-                    <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-left-right"></use></svg><span>تراکنش‌ها</span>
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-left-right"></use></svg><span>تراکنش‌ها</span>
                 </a>
                 <a class="nav-item" href="#/market" data-route="market" title="بازار">
-                    <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#chart-candlestick"></use></svg><span>بازار</span>
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chart-candlestick"></use></svg><span>بازار</span>
                 </a>
                 <a class="nav-item" href="#/settings" data-route="settings" title="تنظیمات">
-                    <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#settings"></use></svg><span>تنظیمات</span>
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#settings"></use></svg><span>تنظیمات</span>
                 </a>
             </nav>
             <div class="sidebar-foot">
                 <div class="source-card" id="sourceCard"></div>
                 <button type="button" class="nav-item" id="logoutBtn" title="خروج">
-                    <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#log-out"></use></svg><span>خروج</span>
+                    <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#log-out"></use></svg><span>خروج</span>
                 </button>
             </div>
         </aside>
@@ -59,7 +59,7 @@
         <div class="main">
             <header class="topbar" id="topbar">
                 <a class="topbar-brand" href="#/" aria-label="دلاربان">
-                    <img class="brand-mark" src="/assets/img/logo.svg" alt="" width="34" height="34">
+                    <img class="brand-mark" src="assets/img/logo.svg" alt="" width="34" height="34">
                 </a>
                 <div class="topbar-title">
                     <h1 id="pageTitle">داشبورد</h1>
@@ -70,10 +70,10 @@
                         <span class="status-dot"></span><span class="status-text">در حال بارگذاری…</span>
                     </button>
                     <button type="button" class="icon-btn" id="themeBtn" aria-label="تغییر پوسته روشن و تیره">
-                        <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#moon"></use></svg>
+                        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#moon"></use></svg>
                     </button>
                     <button type="button" class="btn btn-primary" id="addTxBtn" aria-label="ثبت تراکنش">
-                        <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#plus"></use></svg><span>ثبت تراکنش</span>
+                        <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#plus"></use></svg><span>ثبت تراکنش</span>
                     </button>
                 </div>
             </header>
@@ -83,26 +83,26 @@
 
         <nav class="tabbar" aria-label="منوی اصلی">
             <a class="tab" href="#/" data-route="dashboard">
-                <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#layout-dashboard"></use></svg><span>داشبورد</span>
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#layout-dashboard"></use></svg><span>داشبورد</span>
             </a>
             <a class="tab" href="#/holdings" data-route="holdings">
-                <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#wallet"></use></svg><span>دارایی‌ها</span>
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#wallet"></use></svg><span>دارایی‌ها</span>
             </a>
             <a class="tab" href="#/transactions" data-route="transactions">
-                <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-left-right"></use></svg><span>تراکنش‌ها</span>
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#arrow-left-right"></use></svg><span>تراکنش‌ها</span>
             </a>
             <a class="tab" href="#/market" data-route="market">
-                <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#chart-candlestick"></use></svg><span>بازار</span>
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#chart-candlestick"></use></svg><span>بازار</span>
             </a>
             <a class="tab" href="#/settings" data-route="settings">
-                <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#settings"></use></svg><span>تنظیمات</span>
+                <svg class="icon" aria-hidden="true"><use href="assets/icons.svg#settings"></use></svg><span>تنظیمات</span>
             </a>
         </nav>
     </div>
 
     <div class="toasts" id="toasts"></div>
 
-    <script src="/assets/vendor/chart.umd.min.js" defer></script>
-    <script type="module" src="/assets/js/main.js"></script>
+    <script src="assets/vendor/chart.umd.min.js" defer></script>
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
