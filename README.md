@@ -219,7 +219,7 @@ npm run version:sync
 git commit -am "Release 2.1.1" && git tag v2.1.1 && git push && git push --tags
 ```
 
-یک بار پیش از اولین انتشار، کلید امضای اندروید را بسازید: `bash scripts/android-signing.sh` (کلید بیرون از مخزن ساخته و در Secrets مخزن ذخیره می‌شود؛ از پوشه آن نسخه پشتیبان نگه دارید، چون به‌روزرسانی APK فقط با همین کلید ممکن است).
+فایل APK فقط وقتی منتشر می‌شود که کلید امضای اندروید یک بار ساخته شده باشد: `bash scripts/android-signing.sh` (کلید بیرون از مخزن ساخته و در Secrets مخزن ذخیره می‌شود؛ از پوشه آن نسخه پشتیبان نگه دارید، چون به‌روزرسانی APK فقط با همین کلید ممکن است). اگر ریلیزی بدون APK منتشر شده، بعد از ساخت کلید workflow را برای همان تگ دوباره اجرا کنید: `gh workflow run release.yml --ref v2.1.0`
 
 آیکون‌ها از `public/assets/img/logo.svg` ساخته می‌شوند: `npm install --no-save sharp && node scripts/build-app-icons.js`
 

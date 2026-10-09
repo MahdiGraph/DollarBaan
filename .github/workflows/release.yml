@@ -2,7 +2,9 @@ name: Release
 
 # Builds the desktop apps (Windows, macOS, Linux) and the Android APK, smoke-tests each one,
 # and publishes them as a GitHub release when a version tag (v2.1.0, ...) is pushed.
-# "Run workflow" on the Actions tab builds and tests everything without publishing.
+# The APK is published once the Android signing key is configured (scripts/android-signing.sh);
+# running this workflow again for the tag then adds it to the existing release.
+# "Run workflow" on a branch builds and tests everything without publishing.
 
 on:
   push:
@@ -100,19 +102,21 @@ jobs:
           cache: gradle
       - run: npm install --no-audit --no-fund
       - run: npx cap sync android
+      # Only APKs signed with the project's own key are published: Android refuses to update
+      # an installed app from an APK signed with a different key.
       - name: Signing key
+        id: signing
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
-          elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            echo "::error::Android signing secrets are missing. Run scripts/android-signing.sh once (see README)."
-            exit 1
+            echo "publish=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::No signing secrets: this test APK uses a throwaway key and cannot update an installed release."
+            echo "::warning::Android signing secrets are not set (run scripts/android-signing.sh once). This APK uses a throwaway key: it is tested but not published."
             keytool -genkeypair -keystore "$RUNNER_TEMP/release.keystore" -storetype PKCS12 -storepass throwaway \
               -alias dollarbaan -keyalg RSA -keysize 2048 -validity 30 -dname "CN=DollarBaan test build" -noprompt
+            echo "publish=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Build APKs
         working-directory: mobile/android
@@ -130,14 +134,17 @@ jobs:
           cp android/app/build/outputs/apk/debug/app-debug.apk test-apk/app-debug.apk
           "$apksigner" verify --print-certs "dist/DollarBaan-$version-android.apk"
       - uses: actions/upload-artifact@v7
+        if: steps.signing.outputs.publish == 'true'
         with:
           name: app-Android
           path: mobile/dist/*.apk
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         with:
-          name: android-debug-apk
-          path: mobile/test-apk/app-debug.apk
+          name: android-test-apks
+          path: |
+            mobile/dist/*.apk
+            mobile/test-apk/app-debug.apk
           if-no-files-found: error
 
   android-smoke:
@@ -152,11 +159,7 @@ jobs:
           node-version: 22
       - uses: actions/download-artifact@v8
         with:
-          name: app-Android
-          path: apk
-      - uses: actions/download-artifact@v8
-        with:
-          name: android-debug-apk
+          name: android-test-apks
           path: apk
       - name: Enable KVM
         run: |
@@ -170,7 +173,7 @@ jobs:
           target: google_apis
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot
-          script: bash scripts/android-smoke.sh apk/app-debug.apk "$(ls apk/DollarBaan-*-android.apk)" smoke
+          script: bash scripts/android-smoke.sh apk/test-apk/app-debug.apk "$(ls apk/dist/DollarBaan-*-android.apk)" smoke
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -196,12 +199,18 @@ jobs:
       - name: Checksums
         working-directory: dist
         run: sha256sum -- * > SHA256SUMS.txt && cat SHA256SUMS.txt
-      - name: Create release
+      # Running the workflow again for the same tag (e.g. once the Android key is set up)
+      # refreshes the files of the existing release.
+      - name: Create or update release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="${GITHUB_REF_NAME#v}"
-          gh release create "$GITHUB_REF_NAME" dist/* \
-            --title "DollarBaan $version" \
-            --notes "$(sed "s/{{VERSION}}/$version/g" .github/release-notes.md)" \
-            --generate-notes
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/* \
+              --title "DollarBaan $version" \
+              --notes "$(sed "s/{{VERSION}}/$version/g" .github/release-notes.md)" \
+              --generate-notes
+          fi
