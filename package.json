@@ -2,6 +2,27 @@
   "name": "dollarbaan",
   "version": "2.1.0",
   "description": "Self-hosted personal finance dashboard for tracking currency, gold, coin and crypto holdings in Toman, powered by Iran Market data",
+  "keywords": [
+    "personal-finance",
+    "portfolio-tracker",
+    "iran",
+    "toman",
+    "gold",
+    "currency",
+    "cryptocurrency",
+    "persian",
+    "farsi",
+    "rtl",
+    "jalali",
+    "self-hosted",
+    "electron",
+    "android",
+    "dashboard"
+  ],
+  "homepage": "https://github.com/MahdiGraph/DollarBaan#readme",
+  "bugs": {
+    "url": "https://github.com/MahdiGraph/DollarBaan/issues"
+  },
   "main": "server/index.js",
   "private": true,
   "scripts": {

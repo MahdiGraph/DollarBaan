@@ -1,21 +1,29 @@
 # دلاربان | داشبورد شخصی پایش دارایی‌ها
 
 <p align="center">
-  <a href="https://github.com/MahdiGraph/DollarBaan/releases/latest"><img src="https://img.shields.io/github/v/release/MahdiGraph/DollarBaan?label=Download&color=brightgreen" alt="Download"></a>
-  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android%20%7C%20Server-0f766e" alt="Platforms">
+  <a href="https://github.com/MahdiGraph/DollarBaan/releases/latest"><img src="https://img.shields.io/github/v/release/MahdiGraph/DollarBaan?label=Download&color=brightgreen" alt="دانلود آخرین نسخه دلاربان"></a>
+  <img src="https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android%20%7C%20Server-0f766e" alt="Windows, macOS, Linux, Android, Server">
   <img src="https://img.shields.io/badge/Node.js-20.19%2B-339933?logo=node.js&logoColor=white" alt="Node.js 20.19+">
   <img src="https://img.shields.io/badge/Data-Iran%20Market-0f766e" alt="Iran Market data">
-  <img src="https://img.shields.io/badge/License-MIT-success" alt="License">
-  <img src="https://img.shields.io/github/stars/MahdiGraph/DollarBaan?style=social" alt="Stars">
+  <img src="https://img.shields.io/badge/License-MIT-success" alt="License: MIT">
+  <img src="https://img.shields.io/github/stars/MahdiGraph/DollarBaan?style=social" alt="GitHub stars">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/dashboard-dark.jpg" alt="داشبورد دلاربان در حالت تیره" width="860">
+  <img src="docs/screenshots/dashboard-dark.jpg" alt="داشبورد دلاربان در حالت تیره: ارزش کل سبد، سود و زیان و نمودار روند دارایی‌ها به تومان" width="860">
+</p>
+
+<p align="center">
+  <a href="https://github.com/MahdiGraph/DollarBaan/releases/latest"><b>دانلود برنامه</b></a> ·
+  <a href="#-نصب-روی-سرور">نصب روی سرور</a> ·
+  <a href="#-رفع-اشکال">رفع اشکال</a> ·
+  <a href="CHANGELOG.md">تغییرات نسخه‌ها</a> ·
+  <a href="#english-summary">English</a>
 </p>
 
 ## 📋 معرفی
 
-**دلاربان** یک داشبورد مالی شخصی و متن‌باز است. خرید و فروش ارز، طلا، سکه، رمزارز و حتی دارایی‌هایی مثل سپرده بانکی، ملک یا خودرو را ثبت می‌کنید و دلاربان ارزش لحظه‌ای سبد، میانگین قیمت خرید، سود و زیان و روند دارایی‌هایتان را به **تومان** نشان می‌دهد.
+**دلاربان** (DollarBaan) یک داشبورد مالی شخصی و متن‌باز است. خرید و فروش ارز، طلا، سکه، رمزارز و حتی دارایی‌هایی مثل سپرده بانکی، ملک یا خودرو را ثبت می‌کنید و دلاربان ارزش لحظه‌ای سبد، میانگین قیمت خرید، سود و زیان و روند دارایی‌هایتان را به **تومان** نشان می‌دهد.
 
 دلاربان را می‌توانید به‌صورت **برنامه ویندوز، مک، لینوکس و اندروید** نصب کنید (بدون سرور و ثبت‌نام؛ داده‌ها فقط روی دستگاه خودتان) یا روی **سرور شخصی** راه بیندازید تا از همه دستگاه‌ها با رمز عبور به آن دسترسی داشته باشید.
 
@@ -53,13 +61,13 @@
 - **نصب ساده:** اجرا با Node.js، با PM2، یا با یک دستور Docker. SQLite پیش‌فرض است و MySQL/MariaDB هم پشتیبانی می‌شود.
 
 <p align="center">
-  <img src="docs/screenshots/dashboard-light.jpg" alt="داشبورد در حالت روشن" width="860">
+  <img src="docs/screenshots/dashboard-light.jpg" alt="داشبورد دلاربان در حالت روشن با ترکیب سبد و دیده‌بان بازار" width="860">
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/mobile-dashboard.jpg" alt="داشبورد در موبایل" width="260">
-  <img src="docs/screenshots/mobile-form.jpg" alt="فرم ثبت تراکنش" width="260">
-  <img src="docs/screenshots/mobile-asset.jpg" alt="صفحه دارایی" width="260">
+  <img src="docs/screenshots/mobile-dashboard.jpg" alt="داشبورد دلاربان در موبایل" width="260">
+  <img src="docs/screenshots/mobile-form.jpg" alt="فرم ثبت خرید و فروش ارز، طلا و سکه در دلاربان" width="260">
+  <img src="docs/screenshots/mobile-asset.jpg" alt="صفحه جزئیات دارایی با نمودار قیمت و نقاط خرید و فروش" width="260">
 </p>
 
 ## 🔌 منبع داده‌ها
@@ -254,7 +262,7 @@ git commit -am "Release 2.1.1" && git tag v2.1.1 && git push && git push --tags
 
 ## English summary
 
-**DollarBaan** is an open-source personal finance dashboard for Iranian users. Record buys and sells of currencies, gold, coins, crypto and manually priced assets (bank deposits, property, cars) and track portfolio value, average cost, realized and unrealized profit, and history, all in Toman.
+**DollarBaan (دلاربان)** is an open-source personal finance dashboard and portfolio tracker for Iranian users. Record buys and sells of currencies (US dollar, euro and more), gold, gold coins (Emami, Bahar Azadi), crypto (Bitcoin, Tether) and manually priced assets (bank deposits, property, cars) and track portfolio value, average cost, realized and unrealized profit, and history, all in Iranian Toman.
 
 - **Apps for Windows, macOS, Linux and Android** on the [Releases](https://github.com/MahdiGraph/DollarBaan/releases/latest) page: no server or account needed, data stays on the device, prices are fetched straight from the public Iran Market files. Or self-host it to share one portfolio across devices.
 - **Free market data by default** from [Iran Market Data](https://github.com/iran-market/iran-market.github.io): no sign-up and no API key, 240+ assets refreshed every 30 minutes, multi-year daily history, and automatic fallback from GitHub to jsDelivr or a custom mirror. Navasan remains available as an optional provider.
