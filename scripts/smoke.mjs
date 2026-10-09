@@ -94,23 +94,35 @@ const CHECK = `(async () => {
     };
 })()`;
 
+// A freshly opened page may not have an execution context yet (DevTools then answers
+// with an error instead of a result), so the check is retried until the page is ready.
+async function runCheck(send) {
+    let lastError = 'no response';
+    for (let attempt = 0; attempt < 30; attempt += 1) {
+        const response = await send('Runtime.evaluate', { expression: CHECK, awaitPromise: true, returnByValue: true });
+        const details = response.result && response.result.exceptionDetails;
+        if (response.result && !details) return response.result.result.value;
+        lastError = response.error ? response.error.message : JSON.stringify(details.exception || details);
+        await sleep(1000);
+    }
+    throw new Error(`Page check failed: ${lastError}`);
+}
+
 let failed = false;
 try {
     const page = await findPage();
     console.log(`Found ${page.url}`);
     const { socket, send } = await connect(page.webSocketDebuggerUrl);
-    const response = await send('Runtime.evaluate', { expression: CHECK, awaitPromise: true, returnByValue: true });
-    if (response.result.exceptionDetails) {
-        throw new Error(`Page check threw: ${JSON.stringify(response.result.exceptionDetails.exception || response.result.exceptionDetails)}`);
-    }
-    const result = response.result.result.value;
+    const result = await runCheck(send);
     console.log(JSON.stringify(result, null, 2));
 
     if (shot) {
         await sleep(1500);
         const image = await send('Page.captureScreenshot', { format: 'png' });
-        writeFileSync(shot, Buffer.from(image.result.data, 'base64'));
-        console.log(`Screenshot saved to ${shot}`);
+        if (image.result) {
+            writeFileSync(shot, Buffer.from(image.result.data, 'base64'));
+            console.log(`Screenshot saved to ${shot}`);
+        }
     }
     socket.close();
 

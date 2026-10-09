@@ -5,6 +5,7 @@ import { relativeTime } from './format.js';
 import { notify } from './ui/toast.js';
 import { openTransactionForm } from './ui/transaction-form.js';
 import { effectiveTheme, toggleTheme } from './ui/theme.js';
+import { findUpdate, isDismissed, dismissUpdate } from './updates.js';
 import * as dashboard from './pages/dashboard.js';
 import * as holdings from './pages/holdings.js';
 import * as transactions from './pages/transactions.js';
@@ -23,6 +24,7 @@ const ROUTES = [
 
 let current = null;
 let statusTimer = null;
+let update = null;
 
 function setTitle(title, subtitle = '') {
     $('#pageTitle').textContent = title;
@@ -157,6 +159,15 @@ function renderBanner() {
                 <a class="btn btn-secondary btn-sm" href="#/settings">تغییر رمز</a>
             </div>`);
     }
+    if (update && !isDismissed(update)) {
+        notes.push(html`
+            <div class="alert info" role="status">
+                ${icon('download')}
+                <div class="grow">نسخه جدید دلاربان (<span class="ltr">${update.version}</span>) منتشر شده است.</div>
+                <a class="btn btn-secondary btn-sm" href="${update.url}" target="_blank" rel="noopener">دانلود</a>
+                <button type="button" class="icon-btn plain icon-btn-sm" data-dismiss-update aria-label="بستن" title="بستن">${icon('x', 'icon-sm')}</button>
+            </div>`);
+    }
     setHtml(banner, notes);
 }
 
@@ -190,6 +201,17 @@ async function start() {
     });
     store.on('theme', renderThemeIcon);
     store.on('account', renderBanner);
+    $('#banner').addEventListener('click', (event) => {
+        if (!event.target.closest('[data-dismiss-update]')) return;
+        dismissUpdate(update);
+        renderBanner();
+    });
+    findUpdate()
+        .then((found) => {
+            update = found;
+            renderBanner();
+        })
+        .catch(() => { /* offline or rate limited: try again next launch */ });
     $('#statusPill').addEventListener('click', syncNow);
     $('#themeBtn').addEventListener('click', toggleTheme);
     if (IS_LOCAL) $('#logoutBtn').hidden = true;

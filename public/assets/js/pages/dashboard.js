@@ -121,6 +121,12 @@ function holdingsCard(portfolio) {
         </article>`;
 }
 
+function emptyWatchlistText() {
+    // On the very first launch the watchlist stays empty until the first price sync lands.
+    const waiting = !(store.status && store.status.lastSuccessAt) && store.preferences && store.preferences.watchlist.length;
+    return waiting ? 'در حال دریافت قیمت‌ها…' : 'از صفحه بازار با ستاره، دارایی‌ها را به دیده‌بان اضافه کنید.';
+}
+
 function watchlistCard(items) {
     return html`
         <article class="card">
@@ -140,7 +146,7 @@ function watchlistCard(items) {
                             <span class="value">${money(item.price, { unit: false })}</span>
                             <span class="sub">${deltaText(item.changePct)}</span>
                         </div>
-                    </a>`) : html`<div class="empty"><p>از صفحه بازار با ستاره، دارایی‌ها را به دیده‌بان اضافه کنید.</p></div>`}
+                    </a>`) : html`<div class="empty"><p>${emptyWatchlistText()}</p></div>`}
             </div>
         </article>`;
 }

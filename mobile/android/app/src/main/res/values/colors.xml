@@ -3,6 +3,6 @@
     <color name="colorPrimary">#047857</color>
     <color name="colorPrimaryDark">#065F46</color>
     <color name="colorAccent">#10B981</color>
-    <!-- Matches --bg in public/assets/css/app.css -->
+    <!-- Same as the page background in public/assets/css/app.css -->
     <color name="splash_background">#F4F5F7</color>
 </resources>
