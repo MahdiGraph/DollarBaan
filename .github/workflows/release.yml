@@ -191,6 +191,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/download-artifact@v8
         with:
           pattern: app-*
@@ -199,18 +201,32 @@ jobs:
       - name: Checksums
         working-directory: dist
         run: sha256sum -- * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # This version's section of CHANGELOG.md, then the download guide.
+          awk -v v="$version" '/^## / { found = ($2 == v); next } found' CHANGELOG.md | sed '/./,$!d' > changes.md
+          [ -s changes.md ] || echo "::warning::CHANGELOG.md has no section for $version"
+          previous=$(git tag --list 'v*' --sort=-v:refname | grep -vx "$GITHUB_REF_NAME" | head -n 1 || true)
+          {
+            if [ -s changes.md ]; then printf '## تازه‌های این نسخه\n\n'; cat changes.md; echo; fi
+            sed "s/{{VERSION}}/$version/g" .github/release-notes.md
+            echo
+            if [ -n "$previous" ]; then
+              echo "**همه تغییرات:** https://github.com/$GITHUB_REPOSITORY/compare/$previous...$GITHUB_REF_NAME"
+            else
+              echo "**همه تغییرات:** https://github.com/$GITHUB_REPOSITORY/commits/$GITHUB_REF_NAME"
+            fi
+          } > notes.md
+          cat notes.md
       # Running the workflow again for the same tag (e.g. once the Android key is set up)
-      # refreshes the files of the existing release.
+      # replaces the files of the existing release and keeps its text.
       - name: Create or update release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" dist/* --clobber
           else
-            gh release create "$GITHUB_REF_NAME" dist/* \
-              --title "DollarBaan $version" \
-              --notes "$(sed "s/{{VERSION}}/$version/g" .github/release-notes.md)" \
-              --generate-notes
+            gh release create "$GITHUB_REF_NAME" dist/* --title "DollarBaan ${GITHUB_REF_NAME#v}" --notes-file notes.md
           fi

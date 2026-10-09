@@ -214,7 +214,7 @@ npx cap open android   # باز کردن در Android Studio؛ یا: npm run apk
 با هر تگ نسخه، GitHub Actions همه برنامه‌ها را می‌سازد، روی ویندوز، مک، لینوکس و شبیه‌ساز اندروید اجرا و آزمایش می‌کند و در Releases منتشر می‌کند:
 
 ```bash
-# نسخه را در package.json تغییر دهید، سپس:
+# نسخه را در package.json تغییر دهید و تغییرات را در CHANGELOG.md بنویسید، سپس:
 npm run version:sync
 git commit -am "Release 2.1.1" && git tag v2.1.1 && git push && git push --tags
 ```
